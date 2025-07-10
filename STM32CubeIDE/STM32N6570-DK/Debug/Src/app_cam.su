@@ -1,0 +1,5 @@
+C:/Users/nogueirp/CES_Demo/Src/app_cam.c:29:13:CAM_InitCropConfig	8	static
+C:/Users/nogueirp/CES_Demo/Src/app_cam.c:84:6:CAM_Init	96	static
+C:/Users/nogueirp/CES_Demo/Src/app_cam.c:104:6:CAM_DisplayPipe_Start	8	static
+C:/Users/nogueirp/CES_Demo/Src/app_cam.c:112:6:CAM_NNPipe_Start	8	static
+C:/Users/nogueirp/CES_Demo/Src/app_cam.c:120:6:CAM_IspUpdate	8	static

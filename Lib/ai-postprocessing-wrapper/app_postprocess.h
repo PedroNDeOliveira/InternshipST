@@ -59,6 +59,10 @@ extern "C"
 /* Exported functions ------------------------------------------------------- */
 int32_t app_postprocess_init(void *params_postprocess);
 int32_t app_postprocess_run(void *pInput[], int nb_input, void *pOutput, void *pInput_param);
+int32_t app_postprocess_init_pd(void *params_postprocess);
+int32_t app_postprocess_run_pd(void *pInput[], int nb_input, void *pOutput, void *pInput_param);
+
+
 
 #ifdef __cplusplus
 }

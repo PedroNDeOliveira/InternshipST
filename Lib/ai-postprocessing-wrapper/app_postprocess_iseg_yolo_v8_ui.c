@@ -72,3 +72,15 @@ int32_t app_postprocess_run(void *pInput[], int nb_input, void *pOutput, void *p
   return error;
 }
 #endif
+
+#if POSTPROCESS_TYPE_PD == POSTPROCESS_ISEG_YOLO_V8_UI
+int32_t app_postprocess_init_pd(void *params_postprocess)
+{
+	return 0;
+}
+int32_t app_postprocess_run_pd(void *pInput[], int nb_input, void *pOutput, void *pInput_param)
+{
+	return 0;
+}
+#endif
+

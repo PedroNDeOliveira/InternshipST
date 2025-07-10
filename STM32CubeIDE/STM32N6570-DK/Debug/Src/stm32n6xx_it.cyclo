@@ -1,0 +1,7 @@
+C:/Users/nogueirp/CES_Demo/Src/stm32n6xx_it.c:30:6:NMI_Handler	1
+C:/Users/nogueirp/CES_Demo/Src/stm32n6xx_it.c:39:6:MemManage_Handler	1
+C:/Users/nogueirp/CES_Demo/Src/stm32n6xx_it.c:52:6:BusFault_Handler	1
+C:/Users/nogueirp/CES_Demo/Src/stm32n6xx_it.c:65:6:SecureFault_Handler	1
+C:/Users/nogueirp/CES_Demo/Src/stm32n6xx_it.c:78:6:DebugMon_Handler	1
+C:/Users/nogueirp/CES_Demo/Src/stm32n6xx_it.c:92:6:CSI_IRQHandler	1
+C:/Users/nogueirp/CES_Demo/Src/stm32n6xx_it.c:97:6:DCMIPP_IRQHandler	1

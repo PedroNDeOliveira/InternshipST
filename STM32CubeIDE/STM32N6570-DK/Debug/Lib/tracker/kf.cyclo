@@ -1,0 +1,6 @@
+C:/Users/nogueirp/CES_Demo/Lib/tracker/kf.c:106:13:kf_mat_dot_product	4
+C:/Users/nogueirp/CES_Demo/Lib/tracker/kf.c:153:13:kf_mat_transpose.constprop	3
+C:/Users/nogueirp/CES_Demo/Lib/tracker/kf.c:84:13:kf_vector_mat_dot_product.constprop	4
+C:/Users/nogueirp/CES_Demo/Lib/tracker/kf.c:280:6:kf_init	2
+C:/Users/nogueirp/CES_Demo/Lib/tracker/kf.c:308:6:kf_predict	3
+C:/Users/nogueirp/CES_Demo/Lib/tracker/kf.c:342:6:kf_update	20

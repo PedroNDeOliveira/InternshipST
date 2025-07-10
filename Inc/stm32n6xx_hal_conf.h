@@ -86,6 +86,7 @@ extern "C" {
 // #define HAL_USART_MODULE_ENABLED
 // #define HAL_WWDG_MODULE_ENABLED
 #define HAL_XSPI_MODULE_ENABLED
+#define HAL_GPU2D_MODULE_ENABLED
 
 /* ########################## Oscillator Values adaptation ####################*/
 /**
@@ -451,6 +452,10 @@ extern "C" {
 #include "stm32n6xx_hal_cacheaxi.h"
 #endif /* HAL_XSPI_MODULE_ENABLED */
 
+
+#ifdef HAL_GPU2D_MODULE_ENABLED
+#include "stm32n6xx_hal_gpu2d.h"
+#endif /* HAL_GPU2D_MODULE_ENABLED */
 
 /* Exported macros -----------------------------------------------------------*/
 #ifdef  USE_FULL_ASSERT
