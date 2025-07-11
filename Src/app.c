@@ -242,6 +242,12 @@ typedef struct {
   uint32_t landmarks_out_len;
 } hl_model_info_t;
 
+
+typedef struct {
+  uint8_t *nn_in;
+  uint32_t nn_in_len;
+} people_model_info_t;
+
 typedef struct {
   Button_TypeDef button_id;
   int prev_state;
@@ -1057,6 +1063,8 @@ static void Display_NetworkOutput(display_info_t *info)
 
 // Added
 
+
+
 static void palm_detector_init(pd_model_info_t *info)
 {
   const LL_Buffer_InfoTypeDef *nn_out_info = LL_ATON_Output_Buffers_Info_palm_detector();
@@ -1382,24 +1390,52 @@ static void compute_next_roi(roi_t *src, ld_point_t lm_in[LD_LANDMARK_NB], roi_t
 
 // Added until here
 
+
+static void people_detector_init(people_model_info_t *info){
+	const LL_Buffer_InfoTypeDef *nn_out_info = LL_ATON_Output_Buffers_Info_Default();
+	const LL_Buffer_InfoTypeDef * nn_in_info = LL_ATON_Input_Buffers_Info_Default();
+
+	info->nn_in_len = LL_Buffer_len(&nn_in_info[0]);
+	assert(NN_OUT_NB == model_get_output_nb(nn_out_info));
+	for (int i = 0; i < NN_OUT_NB; i++)
+		assert(LL_Buffer_len(&nn_out_info[i]) == nn_out_len_user[i]);
+}
+
+
+static void people_detector_run(uint8_t *buffer_in, uint8_t *buffer_out[NN_OUT_NB], people_model_info_t *info){
+    /* Note that we don't need to clean/invalidate those input buffers since they are only access in hardware */
+   int ret = LL_ATON_Set_User_Input_Buffer_Default(0, buffer_in, info->nn_in_len);
+   assert(ret == LL_ATON_User_IO_NOERROR);
+    /* Invalidate output buffer before Hw access it */
+   CACHE_OP(SCB_InvalidateDCache_by_Addr(buffer_out[0], sizeof(nn_output_buffers[0])));
+   for (int i = 0; i < NN_OUT_NB; i++) {
+     ret = LL_ATON_Set_User_Output_Buffer_Default(i, buffer_out[i], nn_out_len_user[i]);
+     assert(ret == LL_ATON_User_IO_NOERROR);
+   }
+   LL_ATON_RT_Main(&NN_Instance_Default);
+}
+
 static void nn_thread_fct(void *arg)
 {
-  const LL_Buffer_InfoTypeDef *nn_out_info = LL_ATON_Output_Buffers_Info_Default();
-  const LL_Buffer_InfoTypeDef * nn_in_info = LL_ATON_Input_Buffers_Info_Default();
+  const LL_Buffer_InfoTypeDef *nn_out_info_people = LL_ATON_Output_Buffers_Info_Default();
+  const LL_Buffer_InfoTypeDef * nn_in_info_people = LL_ATON_Input_Buffers_Info_Default();
   uint32_t nn_period_ms;
   uint32_t nn_period[2];
   uint8_t *nn_pipe_dst;
   uint32_t nn_in_len;
   uint32_t inf_ms;
   uint32_t ts;
+  people_model_info_t people_info;
   int ret;
-  int i;
+//  int i;
 
-  /* setup buffers size */
-  nn_in_len = LL_Buffer_len(&nn_in_info[0]);
-  assert(NN_OUT_NB == model_get_output_nb(nn_out_info));
-  for (i = 0; i < NN_OUT_NB; i++)
-    assert(LL_Buffer_len(&nn_out_info[i]) == nn_out_len_user[i]);
+  people_detector_init(&people_info);
+
+//  /* setup buffers size */
+//  nn_in_len = LL_Buffer_len(&nn_in_info_people[0]);
+//  assert(NN_OUT_NB == model_get_output_nb(nn_out_info_people));
+//  for (i = 0; i < NN_OUT_NB; i++)
+//    assert(LL_Buffer_len(&nn_out_info_people[i]) == nn_out_len_user[i]);
 
   /*** App Loop ***************************************************************/
   nn_period[1] = HAL_GetTick();
@@ -1428,16 +1464,17 @@ static void nn_thread_fct(void *arg)
 
     /* run ATON inference */
     ts = HAL_GetTick();
+    people_detector_run(capture_buffer,out,&people_info);
      /* Note that we don't need to clean/invalidate those input buffers since they are only access in hardware */
-    ret = LL_ATON_Set_User_Input_Buffer_Default(0, capture_buffer, nn_in_len);
-    assert(ret == LL_ATON_User_IO_NOERROR);
-     /* Invalidate output buffer before Hw access it */
-    CACHE_OP(SCB_InvalidateDCache_by_Addr(output_buffer, sizeof(nn_output_buffers[0])));
-    for (i = 0; i < NN_OUT_NB; i++) {
-      ret = LL_ATON_Set_User_Output_Buffer_Default(i, out[i], nn_out_len_user[i]);
-      assert(ret == LL_ATON_User_IO_NOERROR);
-    }
-    LL_ATON_RT_Main(&NN_Instance_Default);
+//    ret = LL_ATON_Set_User_Input_Buffer_Default(0, capture_buffer, nn_in_len);
+//    assert(ret == LL_ATON_User_IO_NOERROR);
+//     /* Invalidate output buffer before Hw access it */
+//    CACHE_OP(SCB_InvalidateDCache_by_Addr(out[0], sizeof(nn_output_buffers[0])));
+//    for (i = 0; i < NN_OUT_NB; i++) {
+//      ret = LL_ATON_Set_User_Output_Buffer_Default(i, out[i], nn_out_len_user[i]);
+//      assert(ret == LL_ATON_User_IO_NOERROR);
+//    }
+//    LL_ATON_RT_Main(&NN_Instance_Default);
     inf_ms = HAL_GetTick() - ts;
 
     /* release buffers */
