@@ -172,6 +172,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Lib/ai-postprocessing-wrapper/app_postprocess_template.c</locationURI>
 		</link>
 		<link>
+			<name>Lib/ipl/IPL_resize.c</name>
+			<type>1</type>
+			<location>C:/Users/nogueirp/CES_Demo/Lib/ipl/Src/IPL_resize.c</location>
+		</link>
+		<link>
 			<name>Lib/tracker/kf.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Lib/tracker/kf.c</locationURI>
@@ -330,6 +335,11 @@
 			<name>Lib/lib_vision_models_pp/lib_vision_models_pp/Src/od_pp_yolov8.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Lib/lib_vision_models_pp/lib_vision_models_pp/Src/od_pp_yolov8.c</locationURI>
+		</link>
+		<link>
+			<name>Lib/lib_vision_models_pp/lib_vision_models_pp/Src/pd_pp_model.c</name>
+			<type>1</type>
+			<location>C:/Users/nogueirp/CES_Demo/Lib/lib_vision_models_pp/lib_vision_models_pp/Src/pd_pp_model.c</location>
 		</link>
 		<link>
 			<name>Lib/lib_vision_models_pp/lib_vision_models_pp/Src/vision_models_pp.c</name>

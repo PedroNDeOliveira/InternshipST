@@ -224,6 +224,7 @@ typedef struct {
 
 //Added
 typedef struct {
+  uint8_t *nn_in;
   uint32_t nn_in_len;
   float *prob_out;
   uint32_t prob_out_len;
@@ -285,7 +286,7 @@ static const uint32_t colors[NUMBER_COLORS] = {
     UTIL_LCD_COLOR_ORANGE
 };
 /* Lcd Background Buffer */
-static uint8_t lcd_bg_buffer[DISPLAY_BUFFER_NB][LCD_BG_WIDTH * LCD_BG_HEIGHT * 2] ALIGN_32 IN_PSRAM;
+static uint8_t lcd_bg_buffer[DISPLAY_BUFFER_NB][LCD_BG_WIDTH * LCD_BG_HEIGHT * DISPLAY_BPP] ALIGN_32 IN_PSRAM;
 static int lcd_bg_buffer_disp_idx = 1;
 static int lcd_bg_buffer_capt_idx = 0;
 /* Lcd Foreground Buffer */
@@ -304,6 +305,7 @@ LL_ATON_DECLARE_NAMED_NN_INSTANCE_AND_INTERFACE(Default);
 /* palm detector */
 LL_ATON_DECLARE_NAMED_NN_INSTANCE_AND_INTERFACE(palm_detector);
 static roi_t rois[PD_MAX_HAND_NB];
+int turn_people_detection = 1;
 
 /* hand landmark */
 LL_ATON_DECLARE_NAMED_NN_INSTANCE_AND_INTERFACE(hand_landmark);
@@ -641,6 +643,8 @@ static void app_main_pipe_frame_event()
   reload_bg_layer(next_disp_idx);
   lcd_bg_buffer_disp_idx = next_disp_idx;
   lcd_bg_buffer_capt_idx = next_capt_idx;
+
+  frame_event_nb++;
 }
 
 static void app_ancillary_pipe_frame_event()
@@ -653,6 +657,8 @@ static void app_ancillary_pipe_frame_event()
     ret = HAL_DCMIPP_PIPE_SetMemoryAddress(CMW_CAMERA_GetDCMIPPHandle(), DCMIPP_PIPE2,
                                            DCMIPP_MEMORY_ADDRESS_0, (uint32_t) next_buffer);
     assert(ret == HAL_OK);
+    /* minus 1 since app_main_pipe_frame_event occur before app_ancillary_pipe_frame_event() */
+    frame_event_nb_for_resize = frame_event_nb - 1;
     bqueue_put_ready(&nn_input_queue);
   }
 }
@@ -1072,6 +1078,7 @@ static void palm_detector_init(pd_model_info_t *info)
   int ret;
 
   /* model info */
+  info->nn_in = LL_Buffer_addr_start(&nn_in_info[0]);
   info->nn_in_len = LL_Buffer_len(&nn_in_info[0]);
   info->prob_out = (float *) LL_Buffer_addr_start(&nn_out_info[0]);
   info->prob_out_len = LL_Buffer_len(&nn_out_info[0]);
@@ -1085,6 +1092,17 @@ static void palm_detector_init(pd_model_info_t *info)
   assert(ret == AI_PD_POSTPROCESS_ERROR_NO);
 }
 
+static void palm_detector_prepare_input(uint8_t *buffer, pd_model_info_t *info){
+
+	uint8_t *out_data = info->nn_in;
+    uint8_t *in_data = buffer;
+    uint32_t stride_in = LCD_BG_WIDTH * DISPLAY_BPP;
+    uint32_t stride_out = PD_WIDTH * DISPLAY_BPP;
+
+	IPL_resize_bilinear_iu8ou8_with_strides_RGB(in_data, out_data, stride_in, stride_out,
+			LCD_BG_WIDTH, LCD_BG_HEIGHT, PD_WIDTH, PD_HEIGHT);
+}
+
 static int palm_detector_run(uint8_t *buffer, pd_model_info_t *info, uint32_t *pd_exec_time)
 {
   uint32_t start_ts;
@@ -1094,8 +1112,12 @@ static int palm_detector_run(uint8_t *buffer, pd_model_info_t *info, uint32_t *p
 
   start_ts = HAL_GetTick();
   /* Note that we don't need to clean/invalidate those input buffers since they are only access in hardware */
-  ret = LL_ATON_Set_User_Input_Buffer_palm_detector(0, buffer, info->nn_in_len);
-  assert(ret == LL_ATON_User_IO_NOERROR);
+//  ret = LL_ATON_Set_User_Input_Buffer_palm_detector(0, buffer, info->nn_in_len);
+//  assert(ret == LL_ATON_User_IO_NOERROR);
+
+
+  palm_detector_prepare_input(buffer, info);
+  CACHE_OP(SCB_CleanInvalidateDCache_by_Addr(info->nn_in, info->nn_in_len));
 
   LL_ATON_RT_Main(&NN_Instance_palm_detector);
 
@@ -1202,6 +1224,9 @@ static int hand_landmark_prepare_input(uint8_t *buffer, roi_t *roi, hl_model_inf
 
   return 0;
 }
+
+
+
 #else
 static void app_transform(nema_matrix3x3_t t, app_v3_t v)
 {
@@ -1260,6 +1285,7 @@ static int hand_landmark_prepare_input(uint8_t *buffer, roi_t *roi, hl_model_inf
 
   return 0;
 }
+
 #endif
 
 static int hand_landmark_run(uint8_t *buffer, hl_model_info_t *info, roi_t *roi,
@@ -1415,21 +1441,47 @@ static void people_detector_run(uint8_t *buffer_in, uint8_t *buffer_out[NN_OUT_N
    LL_ATON_RT_Main(&NN_Instance_Default);
 }
 
+static void on_pd_toggle_button_click(void *args)
+{
+  //display_t *disp = (display_t *) args;
+  turn_people_detection = !turn_people_detection;
+  printf("Button pressed. \n \r");
+
+//  ret = xSemaphoreTake(disp->lock, portMAX_DELAY);
+//  assert(ret == pdTRUE);
+//  disp->info.is_pd_displayed = !disp->info.is_pd_displayed;
+//  ret = xSemaphoreGive(disp->lock);
+//  assert(ret == pdTRUE);
+}
+
 static void nn_thread_fct(void *arg)
 {
-  const LL_Buffer_InfoTypeDef *nn_out_info_people = LL_ATON_Output_Buffers_Info_Default();
-  const LL_Buffer_InfoTypeDef * nn_in_info_people = LL_ATON_Input_Buffers_Info_Default();
+//  const LL_Buffer_InfoTypeDef *nn_out_info_people = LL_ATON_Output_Buffers_Info_Default();
+//  const LL_Buffer_InfoTypeDef * nn_in_info_people = LL_ATON_Input_Buffers_Info_Default();
+  button_t hd_toggle_button;
+  pd_model_info_t pd_info;
+
+#ifdef STM32N6570_DK_REV
+  button_init(&hd_toggle_button, BUTTON_TAMP, on_pd_toggle_button_click, &disp);
+#endif
+
   uint32_t nn_period_ms;
   uint32_t nn_period[2];
   uint8_t *nn_pipe_dst;
-  uint32_t nn_in_len;
+  //uint32_t nn_in_len;
   uint32_t inf_ms;
+  uint32_t pd_ms;
   uint32_t ts;
   people_model_info_t people_info;
   int ret;
 //  int i;
 
+  /* Current tracking algo only support single hand */
+  assert(PD_MAX_HAND_NB == 1);
+
+  /* setup models buffer info */
   people_detector_init(&people_info);
+  palm_detector_init(&pd_info);
 
 //  /* setup buffers size */
 //  nn_in_len = LL_Buffer_len(&nn_in_info_people[0]);
@@ -1445,9 +1497,12 @@ static void nn_thread_fct(void *arg)
   CAM_NNPipe_Start(nn_pipe_dst, CMW_MODE_CONTINUOUS); //nn_pipe_dst is the camera output buffer.
   while (1)
   {
+	button_process(&hd_toggle_button);
+
     uint8_t *capture_buffer;
     uint8_t *out[NN_OUT_NB];
     uint8_t *output_buffer;
+    int idx_for_resize;
     int i;
 
     nn_period[0] = nn_period[1];
@@ -1456,6 +1511,9 @@ static void nn_thread_fct(void *arg)
 
     capture_buffer = bqueue_get_ready(&nn_input_queue);
     assert(capture_buffer);
+
+    idx_for_resize = frame_event_nb_for_resize % DISPLAY_BUFFER_NB;
+
     output_buffer = bqueue_get_free(&nn_output_queue, 1);
     assert(output_buffer);
     out[0] = output_buffer;
@@ -1464,7 +1522,13 @@ static void nn_thread_fct(void *arg)
 
     /* run ATON inference */
     ts = HAL_GetTick();
-    people_detector_run(capture_buffer,out,&people_info);
+
+    if(turn_people_detection){
+    	people_detector_run(capture_buffer,out,&people_info);
+    }
+    else{
+    	palm_detector_run(lcd_bg_buffer[idx_for_resize], &pd_info, &pd_ms);
+    }
      /* Note that we don't need to clean/invalidate those input buffers since they are only access in hardware */
 //    ret = LL_ATON_Set_User_Input_Buffer_Default(0, capture_buffer, nn_in_len);
 //    assert(ret == LL_ATON_User_IO_NOERROR);
@@ -1488,6 +1552,7 @@ static void nn_thread_fct(void *arg)
     disp.info.nn_period_ms = nn_period_ms;
     ret = xSemaphoreGive(disp.lock);
     assert(ret == pdTRUE);
+
   }
 }
 
@@ -1716,7 +1781,6 @@ static void Display_init()
   SCRL_ScreenConfig screen_config = {
     .size = {lcd_bg_area.XSize, lcd_bg_area.YSize},
 #ifdef SCR_LIB_USE_SPI
-    .format = SCRL_RGB565,
 #else
     .format = SCRL_YUV422, /* Use SCRL_RGB565 if host support this format to reduce cpu load */
 #endif

@@ -26,6 +26,16 @@
 /* you can tune this */
 #define LD_PROB_THRESHOLD     0.25f
 
+
+/*palm detector model */
+#define PD_WIDTH              224.0f
+#define PD_HEIGHT             224.0f
+#define PD_LANDMARK_NB        21
+#define PD_BINDING_NB         21
+/* you can tune this */
+#define PD_PROB_THRESHOLD     0.25f
+
+
 typedef struct {
   float x;
   float y;

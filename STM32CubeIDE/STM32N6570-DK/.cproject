@@ -127,6 +127,7 @@
 									<listOptionValue builtIn="false" value="../../../Lib/Camera_Middleware/ISP_Library/evision/Inc"/>
 									<listOptionValue builtIn="false" value="../../../Lib/FreeRTOS/Source/include"/>
 									<listOptionValue builtIn="false" value="../../../Lib/FreeRTOS/Source/portable/GCC/ARM_CM55_NTZ/non_secure"/>
+									<listOptionValue builtIn="false" value="../../../Lib/ipl/Inc"/>
 									<listOptionValue builtIn="false" value="../../../Lib/screenl/Inc"/>
 									<listOptionValue builtIn="false" value="../../../Lib/tracker"/>
 									<listOptionValue builtIn="false" value="../../../Lib/NemaGFX/include"/>

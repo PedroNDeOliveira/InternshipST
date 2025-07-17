@@ -35,6 +35,7 @@ Lib/Camera_Middleware/sensors/vd6g \
 Lib/FreeRTOS/Source \
 Lib/FreeRTOS/Source/portable/GCC/ARM_CM55_NTZ/non_secure \
 Lib/ai-postprocessing-wrapper \
+Lib/ipl \
 Lib/lib_vision_models_pp/lib_vision_models_pp/Src \
 Lib/screenl/Src \
 Lib/tracker \

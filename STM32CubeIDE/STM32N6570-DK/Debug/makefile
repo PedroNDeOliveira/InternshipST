@@ -21,6 +21,7 @@ RM := rm -rf
 -include Lib/tracker/subdir.mk
 -include Lib/screenl/Src/subdir.mk
 -include Lib/lib_vision_models_pp/lib_vision_models_pp/Src/subdir.mk
+-include Lib/ipl/subdir.mk
 -include Lib/ai-postprocessing-wrapper/subdir.mk
 -include Lib/FreeRTOS/Source/portable/GCC/ARM_CM55_NTZ/non_secure/subdir.mk
 -include Lib/FreeRTOS/Source/subdir.mk

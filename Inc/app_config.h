@@ -34,7 +34,7 @@
 #define LCD_BG_HEIGHT 240
 #endif
 /* Delay display by DISPLAY_DELAY frame number */
-#define DISPLAY_DELAY 1
+#define DISPLAY_DELAY 2
 
 #ifdef STM32N6570_DK_REV
 /* Use yolox */
