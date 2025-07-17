@@ -1509,25 +1509,39 @@ static void nn_thread_fct(void *arg)
     nn_period[1] = HAL_GetTick();
     nn_period_ms = nn_period[1] - nn_period[0];
 
-    capture_buffer = bqueue_get_ready(&nn_input_queue);
-    assert(capture_buffer);
+//    capture_buffer = bqueue_get_ready(&nn_input_queue);
+//    assert(capture_buffer);
 
     idx_for_resize = frame_event_nb_for_resize % DISPLAY_BUFFER_NB;
 
-    output_buffer = bqueue_get_free(&nn_output_queue, 1);
-    assert(output_buffer);
-    out[0] = output_buffer;
-    for (i = 1; i < NN_OUT_NB; i++)
-      out[i] = out[i - 1] + ALIGN_VALUE(nn_out_len_user[i - 1], 32);
+//    output_buffer = bqueue_get_free(&nn_output_queue, 1);
+//    assert(output_buffer);
+//    out[0] = output_buffer;
+//    for (i = 1; i < NN_OUT_NB; i++)
+//      out[i] = out[i - 1] + ALIGN_VALUE(nn_out_len_user[i - 1], 32);
 
     /* run ATON inference */
     ts = HAL_GetTick();
 
     if(turn_people_detection){
+
+        capture_buffer = bqueue_get_ready(&nn_input_queue);
+        assert(capture_buffer);
+
+        output_buffer = bqueue_get_free(&nn_output_queue, 1);
+        assert(output_buffer);
+        out[0] = output_buffer;
+        for (i = 1; i < NN_OUT_NB; i++)
+          out[i] = out[i - 1] + ALIGN_VALUE(nn_out_len_user[i - 1], 32);
+
     	people_detector_run(capture_buffer,out,&people_info);
+
+        /* release buffers */
+        bqueue_put_free(&nn_input_queue);
+        bqueue_put_ready(&nn_output_queue);
     }
     else{
-    	palm_detector_run(lcd_bg_buffer[idx_for_resize], &pd_info, &pd_ms);
+    	//palm_detector_run(lcd_bg_buffer[idx_for_resize], &pd_info, &pd_ms);
     }
      /* Note that we don't need to clean/invalidate those input buffers since they are only access in hardware */
 //    ret = LL_ATON_Set_User_Input_Buffer_Default(0, capture_buffer, nn_in_len);
@@ -1542,8 +1556,8 @@ static void nn_thread_fct(void *arg)
     inf_ms = HAL_GetTick() - ts;
 
     /* release buffers */
-    bqueue_put_free(&nn_input_queue);
-    bqueue_put_ready(&nn_output_queue);
+//    bqueue_put_free(&nn_input_queue);
+//    bqueue_put_ready(&nn_output_queue);
 
     /* update display stats */
     ret = xSemaphoreTake(disp.lock, portMAX_DELAY);
@@ -1743,7 +1757,7 @@ static void dp_thread_fct(void *arg)
 
     ts = HAL_GetTick();
     dp_update_drawing_area();
-    Display_NetworkOutput(&info);
+    Display_NetworkOutput(&info); // This is what I have to change.
     SCB_CleanDCache_by_Addr(lcd_fg_buffer[lcd_fg_buffer_rd_idx], LCD_FG_WIDTH * LCD_FG_HEIGHT* 2);
     dp_commit_drawing_area();
     disp_ms = HAL_GetTick() - ts;
