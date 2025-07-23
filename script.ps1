@@ -1,0 +1,35 @@
+# Set path to CubeProgrammer tools
+$CPROG_PTH = "C:\ST\STM32CubeIDE_1.18.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.win32_2.2.100.202412061334\tools\bin"
+
+# Executables
+$SGN_BIN =  "STM32_SigningTool_CLI.exe"
+$CP_BIN =  "STM32_Programmer_CLI.exe"
+
+# Files and addresses
+$OUTPUT_BIN = ".\STM32CubeIDE\STM32N6570-DK\Debug\x-cube-n6-ai-people-detection-tracking-dk.bin"
+$OUTPUT_SIGNED = ".\STM32CubeIDE\STM32N6570-DK\Debug\x-cube-n6-ai-people-detection-tracking-dk-signed.bin"
+$OUTPUT_DEST_ADDR = "0x70100000"
+
+$OUTPUT_FSBL = ".\Binary\ai_fsbl.hex"
+
+$OUTPUT_PEOPLE = ".\Binary\network_data-dk.hex"
+
+$OUTPUT_PALM = ".\Model\palm_detector_data.hex"
+
+Write-Host "`n-- Signing"
+Remove-Item -Force $OUTPUT_SIGNED -ErrorAction SilentlyContinue
+& $SGN_BIN -bin $OUTPUT_BIN -nk -of 0x80000000 -t fsbl -o $OUTPUT_SIGNED -hv 2.3 -dump $OUTPUT_SIGNED
+
+Write-Host "`n-- Resetting the board"
+& $CP_BIN -q -c "port=SWD mode=powerdown freq=8000 ap=0"
+
+Write-Host "`n-- Programming into flash"
+& $CP_BIN -q -c "port=SWD mode=hotplug ap=0" --extload "$CPROG_PTH\ExternalLoader\MX66UW1G45G_STM32N6570-DK.stldr" --download $OUTPUT_SIGNED $OUTPUT_DEST_ADDR --verify
+& $CP_BIN -q -c "port=SWD mode=hotplug ap=0" --extload "$CPROG_PTH\ExternalLoader\MX66UW1G45G_STM32N6570-DK.stldr" --download $OUTPUT_FSBL  --verify
+& $CP_BIN -q -c "port=SWD mode=hotplug ap=0" --extload "$CPROG_PTH\ExternalLoader\MX66UW1G45G_STM32N6570-DK.stldr" --download $OUTPUT_PEOPLE  --verify
+& $CP_BIN -q -c "port=SWD mode=hotplug ap=0" --extload "$CPROG_PTH\ExternalLoader\MX66UW1G45G_STM32N6570-DK.stldr" --download $OUTPUT_PALM  --verify
+
+Write-Host "`n-- Resetting the board"
+& $CP_BIN -q -c "port=SWD mode=powerdown freq=8000 ap=0"
+
+Write-Host "`n-- Done"

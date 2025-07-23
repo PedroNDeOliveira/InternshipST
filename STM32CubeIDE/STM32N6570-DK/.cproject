@@ -92,6 +92,7 @@
 									<listOptionValue builtIn="false" value="USE_VD66GY_SENSOR"/>
 									<listOptionValue builtIn="false" value="USE_VD55G1_SENSOR"/>
 									<listOptionValue builtIn="false" value="STM32N6570_DK_REV"/>
+									<listOptionValue builtIn="false" value="HAS_ROTATION_SUPPORT=0"/>
 									<listOptionValue builtIn="false" value="TX_MAX_PARALLEL_NETWORKS=1"/>
 									<listOptionValue builtIn="false" value="LL_ATON_PLATFORM=LL_ATON_PLAT_STM32N6"/>
 									<listOptionValue builtIn="false" value="LL_ATON_OSAL=LL_ATON_OSAL_FREERTOS"/>

@@ -70,7 +70,7 @@ void nema_enable_tiling(int);
 //added
 #define DBG_INFO 0
 #define USE_FILTERED_TS 1
-#define DISPLAY_BPP 2
+#define DISPLAY_BPP 3 // I've just change LCD bg buffer format to RGB888
 // until here
 
 #define ALIGN_VALUE(_v_,_a_) (((_v_) + (_a_) - 1) & ~((_a_) - 1)) // Rounds up v to the nearest multiple of a.
@@ -287,6 +287,8 @@ static const uint32_t colors[NUMBER_COLORS] = {
 };
 /* Lcd Background Buffer */
 static uint8_t lcd_bg_buffer[DISPLAY_BUFFER_NB][LCD_BG_WIDTH * LCD_BG_HEIGHT * DISPLAY_BPP] ALIGN_32 IN_PSRAM;
+static uint8_t lcd_bg_buffer_resized[192 * 192 * DISPLAY_BPP] ALIGN_32 IN_PSRAM; // Testing resizing operation.
+
 static int lcd_bg_buffer_disp_idx = 1;
 static int lcd_bg_buffer_capt_idx = 0;
 /* Lcd Foreground Buffer */
@@ -413,12 +415,12 @@ static void cvt_pd_coord_to_screen_coord(pd_pp_box_t *box)
    */
 
   box->x_center *= LCD_BG_WIDTH;
-  box->y_center *= LCD_BG_WIDTH;
+  box->y_center *= LCD_BG_HEIGHT;
   box->width *= LCD_BG_WIDTH;
-  box->height *= LCD_BG_WIDTH;
+  box->height *= LCD_BG_HEIGHT;
   for (i = 0; i < AI_PD_MODEL_PP_NB_KEYPOINTS; i++) {
     box->pKps[i].x *= LCD_BG_WIDTH;
-    box->pKps[i].y *= LCD_BG_WIDTH;
+    box->pKps[i].y *= LCD_BG_HEIGHT;
   }
 }
 
@@ -621,7 +623,8 @@ static void reload_bg_layer(int next_disp_idx)
 {
   int ret;
 
-  ret = SCRL_SetAddress_NoReload(lcd_bg_buffer[next_disp_idx], SCRL_LAYER_0);
+  ret = SCRL_SetAddress_NoReload(lcd_bg_buffer[next_disp_idx], SCRL_LAYER_0); // Changed it here.
+  //ret = SCRL_SetAddress_NoReload(lcd_bg_buffer_resized, SCRL_LAYER_0);
   assert(ret == 0);
   ret = SCRL_ReloadLayer(SCRL_LAYER_0);
   assert(ret == 0);
@@ -639,6 +642,15 @@ static void app_main_pipe_frame_event()
   ret = HAL_DCMIPP_PIPE_SetMemoryAddress(CMW_CAMERA_GetDCMIPPHandle(), DCMIPP_PIPE1,
                                          DCMIPP_MEMORY_ADDRESS_0, (uint32_t) lcd_bg_buffer[next_capt_idx]);
   assert(ret == HAL_OK);
+
+//  uint8_t *out_data = lcd_bg_buffer_resized;
+//  uint8_t *in_data = lcd_bg_buffer[lcd_bg_buffer_disp_idx];
+//  uint32_t stride_in = LCD_BG_WIDTH * DISPLAY_BPP;
+//  uint32_t stride_out = (unsigned int) PD_WIDTH * DISPLAY_BPP;
+//
+//	IPL_resize_bilinear_iu8ou8_with_strides_RGB(in_data, out_data, stride_in, stride_out,
+//			LCD_BG_WIDTH, LCD_BG_HEIGHT, (unsigned int) PD_WIDTH, (unsigned int) PD_HEIGHT);
+
 
   reload_bg_layer(next_disp_idx);
   lcd_bg_buffer_disp_idx = next_disp_idx;
@@ -849,15 +861,15 @@ static void display_ld_hand(hand_info_t *hand)
   }
 }
 
-void display_hand(display_info_t *info, hand_info_t *hand)
-{
-  if (info->is_pd_displayed) {
-    display_pd_hand(&hand->pd_hands);
-    display_roi(&hand->roi);
-  }
-  if (info->is_ld_displayed)
-    display_ld_hand(hand);
-}
+//void display_hand(display_info_t *info, hand_info_t *hand)
+//{
+//  if (info->is_pd_displayed) {
+//    display_pd_hand(&hand->pd_hands);
+//    display_roi(&hand->roi);
+//  }
+//  if (info->is_ld_displayed)
+//    display_ld_hand(hand);
+//}
 
 // Added until here
 
@@ -1059,12 +1071,70 @@ static void Display_NetworkOutput_Tracking(display_info_t *info)
 }
 #endif
 
+void display_hand(display_info_t *info, hand_info_t *hand)
+{
+	display_pd_hand(&hand->pd_hands);
+	display_roi(&hand->roi);
+}
+
+static void Display_NetworkOutput_PalmDetector(display_info_t *info){
+	  float cpu_load_one_second;
+	  int line_nb = 0;
+	  float nn_fps;
+	  int i;
+
+	  /* clear previous ui */
+	  UTIL_LCD_FillRect(lcd_fg_area.X0, lcd_fg_area.Y0, lcd_fg_area.XSize, lcd_fg_area.YSize, 0x00000000); /* Clear previous boxes */
+
+	  /* cpu load */
+	  cpuload_update(&cpu_load);
+	  cpuload_get_info(&cpu_load, NULL, &cpu_load_one_second, NULL);
+
+	  /* draw metrics */
+	  nn_fps = 1000.0 / info->nn_period_ms;
+	  UTIL_LCDEx_PrintfAt(0, LINE(line_nb),  RIGHT_MODE, "Cpu load");
+	  line_nb += 1;
+	  UTIL_LCDEx_PrintfAt(0, LINE(line_nb),  RIGHT_MODE, "   %.1f%%", cpu_load_one_second);
+	  line_nb += 2;
+	  UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, "Inferences");
+	  line_nb += 1;
+	  UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, " pd %2ums", info->pd_ms);
+	  line_nb += 1;
+	  UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, " hl %2ums", info->hl_ms);
+	  line_nb += 2;
+	  UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, "  %.1f FPS", nn_fps);
+	  line_nb += 2;
+	  if (DBG_INFO) {
+	    UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, "Display");
+	    line_nb += 1;
+	    UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, "   %ums", info->disp_ms);
+	    line_nb += 1;
+	  }
+
+	  /* display palm detector output */
+	  for (i = 0; i < info->pd_hand_nb; i++) {
+	    if (info->hands[i].is_valid){
+	    	printf("Printing hand. \n \r");
+	      	display_hand(info, &info->hands[i]);
+	    }
+	  }
+
+	  if (DBG_INFO)
+	    UTIL_LCDEx_PrintfAt(0, LINE(line_nb),  RIGHT_MODE, "pd : %5.1f %%", info->pd_max_prob * 100);
+	}
+
 static void Display_NetworkOutput(display_info_t *info)
 {
-  if (info->tracking_enabled)
-    Display_NetworkOutput_Tracking(info);
-  else
-    Display_NetworkOutput_NoTracking(info);
+	if(turn_people_detection){
+	  if (info->tracking_enabled)
+		Display_NetworkOutput_Tracking(info);
+	  else
+		Display_NetworkOutput_NoTracking(info);
+	}
+	else{
+		//printf("Running Palm Detector Display. \n \r");
+		Display_NetworkOutput_PalmDetector(info);
+	}
 }
 
 // Added
@@ -1101,6 +1171,33 @@ static void palm_detector_prepare_input(uint8_t *buffer, pd_model_info_t *info){
 
 	IPL_resize_bilinear_iu8ou8_with_strides_RGB(in_data, out_data, stride_in, stride_out,
 			LCD_BG_WIDTH, LCD_BG_HEIGHT, PD_WIDTH, PD_HEIGHT);
+
+//	int idx = 0;
+
+//	printf("Before resize. \n \r");
+//	for(int z = 0; z < 3; z++){
+//		printf("\n \n New dimension \n \n \r");
+//		for(int j = 0; j < 480; j++){
+//			for(int i = 0; i < 800; i++){
+//				idx = (z*800*480) + 800*j + i;
+//				printf("%d ", buffer[idx]);
+//			}
+//			printf("\n\r");
+//		}
+//	}
+//
+//
+//	printf("\n \n After resize. \n \n \r");
+//	for(int z = 0; z < 3; z++){
+//		printf("\n \n New dimension \n \n \r");
+//		for(int j = 0; j < 224; j++){
+//			for(int i = 0; i < 224; i++){
+//				idx = (z*224*224) + 224*j + i;
+//				printf("%d ", info->nn_in[idx]);
+//			}
+//			printf("\n\r");
+//		}
+//	}
 }
 
 static int palm_detector_run(uint8_t *buffer, pd_model_info_t *info, uint32_t *pd_exec_time)
@@ -1110,29 +1207,67 @@ static int palm_detector_run(uint8_t *buffer, pd_model_info_t *info, uint32_t *p
   int ret;
   int i;
 
+  //printf("Running palm detector. \n \r");
+
   start_ts = HAL_GetTick();
   /* Note that we don't need to clean/invalidate those input buffers since they are only access in hardware */
 //  ret = LL_ATON_Set_User_Input_Buffer_palm_detector(0, buffer, info->nn_in_len);
 //  assert(ret == LL_ATON_User_IO_NOERROR);
 
-
+  //printf("Preparing palm detector input. \n \r");
+  //printf("Palm detector input prepared. Cleaning cache. \n \r");
   palm_detector_prepare_input(buffer, info);
   CACHE_OP(SCB_CleanInvalidateDCache_by_Addr(info->nn_in, info->nn_in_len));
+  //npu_cache_invalidate();
+  //invalidate NPU cache.
 
+  //printf("Executing palm detector inference. \n \r");
   LL_ATON_RT_Main(&NN_Instance_palm_detector);
 
+//  npu_cache_clean_range(info->prob_out, info->prob_out_len);
+//  npu_cache_clean_range(info->boxes_out, info->boxes_out_len);
+//  /* Discard nn_out region (used by pp_outputs variables) to avoid Dcache evictions during nn inference */
+//  CACHE_OP(SCB_CleanInvalidateDCache_by_Addr(info->prob_out, info->prob_out_len));
+//  CACHE_OP(SCB_CleanInvalidateDCache_by_Addr(info->boxes_out, info->boxes_out_len));
+
+  //printf("Post processing palm detector inference output. \n \r");
   ret = app_postprocess_run_pd((void * []){info->prob_out, info->boxes_out}, 2, &info->pd_out, &info->static_param);
   assert(ret == AI_PD_POSTPROCESS_ERROR_NO);
+  //printf("Palm detector post process finished. \n \r");
+
+
+  CACHE_OP(SCB_InvalidateDCache_by_Addr(info->prob_out, info->prob_out_len));
+  CACHE_OP(SCB_InvalidateDCache_by_Addr(info->boxes_out, info->boxes_out_len));
+
   hand_nb = MIN(info->pd_out.box_nb, PD_MAX_HAND_NB);
+
+//  float32_t prob;
+//  float32_t x_center;
+//  float32_t y_center;
+//  float32_t width;
+//  float32_t height;
+
+
+  printf("Hands detected: %lu \n \r", info->pd_out.box_nb);
+  for(int i = 0; i < info->pd_out.box_nb; i++){
+	  //if(info->pd_out.pOutData->prob > 0.5f){
+	  pd_pp_box_t *box = &info->pd_out.pOutData[i];
+	  printf("Prob = %.5f \n \r", box->prob);
+	  printf("X center = %.5f \n \r", box->x_center);
+	  printf("Y center = %.5f \n \r", box->y_center);
+	  printf("width = %.5f \n \r", box->width);
+	  printf("height = %.5f \n \n \n \n \r", box->height);
+
+	  printf("\n\n\n \r");
+	  //}
+  }
 
   for (i = 0; i < hand_nb; i++) {
     cvt_pd_coord_to_screen_coord(&info->pd_out.pOutData[i]);
     pd_box_to_roi(&info->pd_out.pOutData[i], &rois[i]);
   }
 
-  /* Discard nn_out region (used by pp_outputs variables) to avoid Dcache evictions during nn inference */
-  CACHE_OP(SCB_InvalidateDCache_by_Addr(info->prob_out, info->prob_out_len));
-  CACHE_OP(SCB_InvalidateDCache_by_Addr(info->boxes_out, info->boxes_out_len));
+//  /* Discard nn_out region (used by pp_outputs variables) to avoid Dcache evictions during nn inference */
 
   *pd_exec_time = HAL_GetTick() - start_ts;
 
@@ -1539,9 +1674,36 @@ static void nn_thread_fct(void *arg)
         /* release buffers */
         bqueue_put_free(&nn_input_queue);
         bqueue_put_ready(&nn_output_queue);
+
+        inf_ms = HAL_GetTick() - ts;
+
+        /* update display stats */
+        ret = xSemaphoreTake(disp.lock, portMAX_DELAY);
+        assert(ret == pdTRUE);
+        disp.info.inf_ms = inf_ms;
+        disp.info.nn_period_ms = nn_period_ms;
+        ret = xSemaphoreGive(disp.lock);
+        assert(ret == pdTRUE);
     }
     else{
-    	//palm_detector_run(lcd_bg_buffer[idx_for_resize], &pd_info, &pd_ms);
+    	int hands = palm_detector_run(lcd_bg_buffer[idx_for_resize], &pd_info, &pd_ms);
+
+    	inf_ms = HAL_GetTick() - ts;
+
+        /* update display stats */
+        ret = xSemaphoreTake(disp.lock, portMAX_DELAY);
+        assert(ret == pdTRUE);
+        disp.info.pd_ms = pd_ms;
+        disp.info.nn_period_ms = inf_ms;
+        disp.info.pd_hand_nb = hands;
+        disp.info.pd_max_prob = pd_info.pd_out.pOutData[0].prob;
+        disp.info.hands[0].is_valid = hands;
+        copy_pd_box(&disp.info.hands[0].pd_hands, &pd_info.pd_out.pOutData[0]);
+        disp.info.hands[0].roi = rois[0];
+        ret = xSemaphoreGive(disp.lock);
+        assert(ret == pdTRUE);
+
+        xSemaphoreGive(disp.update);
     }
      /* Note that we don't need to clean/invalidate those input buffers since they are only access in hardware */
 //    ret = LL_ATON_Set_User_Input_Buffer_Default(0, capture_buffer, nn_in_len);
@@ -1553,19 +1715,11 @@ static void nn_thread_fct(void *arg)
 //      assert(ret == LL_ATON_User_IO_NOERROR);
 //    }
 //    LL_ATON_RT_Main(&NN_Instance_Default);
-    inf_ms = HAL_GetTick() - ts;
+//    inf_ms = HAL_GetTick() - ts;
 
     /* release buffers */
 //    bqueue_put_free(&nn_input_queue);
 //    bqueue_put_ready(&nn_output_queue);
-
-    /* update display stats */
-    ret = xSemaphoreTake(disp.lock, portMAX_DELAY);
-    assert(ret == pdTRUE);
-    disp.info.inf_ms = inf_ms;
-    disp.info.nn_period_ms = nn_period_ms;
-    ret = xSemaphoreGive(disp.lock);
-    assert(ret == pdTRUE);
 
   }
 }
@@ -1745,8 +1899,10 @@ static void dp_thread_fct(void *arg)
 
   while (1)
   {
+	//printf("Display after semaphore. \n \r");
     ret = xSemaphoreTake(disp.update, portMAX_DELAY);
     assert(ret == pdTRUE);
+    //printf("Display before semaphore. \n \r");
 
     ret = xSemaphoreTake(disp.lock, portMAX_DELAY);
     assert(ret == pdTRUE);
@@ -1780,10 +1936,10 @@ static void Display_init()
 {
   SCRL_LayerConfig layers_config[2] = {
     {
-      .origin = {lcd_bg_area.X0, lcd_bg_area.Y0},
-      .size = {lcd_bg_area.XSize, lcd_bg_area.YSize},
-      .format = SCRL_RGB565,
-      .address = lcd_bg_buffer[lcd_bg_buffer_disp_idx],
+	  .origin = {lcd_bg_area.X0, lcd_bg_area.Y0},
+	  .size = {lcd_bg_area.XSize, lcd_bg_area.YSize},
+      .format = SCRL_BGR888, //before it was RGB565. One byte less, so also need to change the DISPLAY_BPP
+      .address = lcd_bg_buffer[lcd_bg_buffer_disp_idx],//lcd_bg_buffer_resized,
     },
     {
       .origin = {lcd_fg_area.X0, lcd_fg_area.Y0},
@@ -1796,7 +1952,7 @@ static void Display_init()
     .size = {lcd_bg_area.XSize, lcd_bg_area.YSize},
 #ifdef SCR_LIB_USE_SPI
 #else
-    .format = SCRL_YUV422, /* Use SCRL_RGB565 if host support this format to reduce cpu load */
+    .format = SCRL_YUV422, //SCRL_YUV422, /* Use SCRL_RGB565 if host support this format to reduce cpu load */
 #endif
     .address = screen_buffer,
     .fps = CAMERA_FPS,
@@ -1806,11 +1962,47 @@ static void Display_init()
   ret = SCRL_Init((SCRL_LayerConfig *[2]){&layers_config[0], &layers_config[1]}, &screen_config);
   assert(ret == 0);
 
-  UTIL_LCD_SetLayer(SCRL_LAYER_1);
+  UTIL_LCD_SetLayer(SCRL_LAYER_1); // Foreground
   UTIL_LCD_Clear(UTIL_LCD_COLOR_TRANSPARENT);
   UTIL_LCD_SetFont(&LCD_FONT);
   UTIL_LCD_SetTextColor(UTIL_LCD_COLOR_WHITE);
 }
+
+//static void Display_init()
+//{
+//  SCRL_LayerConfig layers_config[2] = {
+//    {
+//      .origin = {lcd_bg_area.X0, lcd_bg_area.Y0},
+//      .size = {lcd_bg_area.XSize, lcd_bg_area.YSize},
+//      .format = SCRL_BGR888, //before it was RGB565. One byte less, so also need to change the DISPLAY_BPP
+//      .address = lcd_bg_buffer[lcd_bg_buffer_disp_idx],
+//    },
+//    {
+//      .origin = {lcd_fg_area.X0, lcd_fg_area.Y0},
+//      .size = {lcd_fg_area.XSize, lcd_fg_area.YSize},
+//      .format = SCRL_ARGB4444,
+//      .address = lcd_fg_buffer[1],
+//    },
+//  };
+//  SCRL_ScreenConfig screen_config = {
+//    .size = {lcd_bg_area.XSize, lcd_bg_area.YSize},
+//#ifdef SCR_LIB_USE_SPI
+//#else
+//    .format = SCRL_YUV422, //SCRL_YUV422, /* Use SCRL_RGB565 if host support this format to reduce cpu load */
+//#endif
+//    .address = screen_buffer,
+//    .fps = CAMERA_FPS,
+//  };
+//  int ret;
+//
+//  ret = SCRL_Init((SCRL_LayerConfig *[2]){&layers_config[0], &layers_config[1]}, &screen_config);
+//  assert(ret == 0);
+//
+//  UTIL_LCD_SetLayer(SCRL_LAYER_1);
+//  UTIL_LCD_Clear(UTIL_LCD_COLOR_TRANSPARENT);
+//  UTIL_LCD_SetFont(&LCD_FONT);
+//  UTIL_LCD_SetTextColor(UTIL_LCD_COLOR_WHITE);
+//}
 
 void app_run()
 {
@@ -1829,6 +2021,8 @@ void app_run()
   /* screen init */
   memset(lcd_bg_buffer, 0, sizeof(lcd_bg_buffer));
   CACHE_OP(SCB_CleanInvalidateDCache_by_Addr(lcd_bg_buffer, sizeof(lcd_bg_buffer)));
+//  memset(lcd_bg_buffer_resized, 0, sizeof(lcd_bg_buffer_resized));
+//  CACHE_OP(SCB_CleanInvalidateDCache_by_Addr(lcd_bg_buffer_resized, sizeof(lcd_bg_buffer_resized)));
   memset(lcd_fg_buffer, 0, sizeof(lcd_fg_buffer));
   CACHE_OP(SCB_CleanInvalidateDCache_by_Addr(lcd_fg_buffer, sizeof(lcd_fg_buffer)));
   Display_init();

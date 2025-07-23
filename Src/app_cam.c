@@ -22,8 +22,8 @@
 #include "app_config.h"
 #include "utils.h"
 
-#define DISPLAY_FORMAT DCMIPP_PIXEL_PACKER_FORMAT_RGB565_1
-#define DISPLAY_BPP 2
+#define DISPLAY_FORMAT DCMIPP_PIXEL_PACKER_FORMAT_RGB888_YUV444_1 // It was DCMIPP_PIXEL_PACKER_FORMAT_RGB565_1.
+#define DISPLAY_BPP 3 // It was 2.
 
 /* Keep display output aspect ratio using crop area */
 static void CAM_InitCropConfig(CMW_Manual_roi_area_t *roi, int sensor_width, int sensor_height)

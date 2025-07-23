@@ -122,7 +122,7 @@ int32_t CMW_CAMERA_GetSensorName(CMW_Sensor_Name_t *sensorName)
   initValues.width = 0;
   initValues.height = 0;
   initValues.fps = 30;
-  initValues.pixel_format = DCMIPP_PIXEL_PACKER_FORMAT_RGB565_1;
+  initValues.pixel_format = DCMIPP_PIXEL_PACKER_FORMAT_RGB565_1; // It was DCMIPP_PIXEL_PACKER_FORMAT_RGB565_1.
   initValues.mirrorFlip = CMW_MIRRORFLIP_NONE;
 
   /* Set DCMIPP instance */

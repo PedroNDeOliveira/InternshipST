@@ -28,8 +28,8 @@
 
 
 /*palm detector model */
-#define PD_WIDTH              224.0f
-#define PD_HEIGHT             224.0f
+#define PD_WIDTH              192
+#define PD_HEIGHT             192
 #define PD_LANDMARK_NB        21
 #define PD_BINDING_NB         21
 /* you can tune this */

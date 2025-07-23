@@ -92,6 +92,7 @@ void IPL_resize_bilinear_iu8ou8_with_strides_RGB(const uint8_t* in_data,
                                              const size_t width_out,
                                              const size_t height_out)
 { 
+	//printf("Performing bilinear interpolation for resize. \n \r");
     float32_t inv_width_scale, inv_height_scale;
     inv_width_scale = ((float32_t)width_in) / ((float32_t) width_out);
     inv_height_scale = ((float32_t)height_in) / ((float32_t)height_out);
@@ -99,16 +100,20 @@ void IPL_resize_bilinear_iu8ou8_with_strides_RGB(const uint8_t* in_data,
     uint8_t * out_data_current_ptr = out_data;
     uint8_t * out_data_ptr;
 
+    //printf("Height out = %u \n \r");
     for (size_t h = 0; h < height_out; h++)
     {
+    	//printf("Inside for %d \n \r", h);
         float32_t Y = MIN(MAX(-0.5f + inv_height_scale*(h + 0.5f),0.0f),(float32_t)height_in-1);
         uint32_t Yi = (uint32_t)Y;
         const uintptr_t y_step = (Yi == (height_in - 1)) ? 0 : stride_in;
         uint32_t offset_y = Yi * stride_in;
         float32_t weights_Y[2];
+        //printf("_BILINEAR_COMPUTE_WEIGHTS_Y %d \n \r", h);
         _BILINEAR_COMPUTE_WEIGHTS_Y( Y, weights_Y);
 
         out_data_ptr = out_data_current_ptr;
+        //printf("Width out = %u \n \r", width_out);
         for (size_t w = 0; w < width_out; w++)
         {
             float32_t X = MIN(MAX(-0.5f + inv_width_scale*(w + 0.5f),0.0f),(float32_t)width_in-1);
@@ -119,7 +124,9 @@ void IPL_resize_bilinear_iu8ou8_with_strides_RGB(const uint8_t* in_data,
             
             size_t inc[2] = { x_step, y_step};
             float32_t weights[4];
+            //printf("_BILINEAR_COMPUTE_WEIGHTS_X %d %d \n \r", h, w);
             _BILINEAR_COMPUTE_WEIGHTS_X( X, weights_Y, weights);
+            //printf("IPL_bilinear_iu8ou8_kernel_RGB %d \n \r", h);
             IPL_bilinear_iu8ou8_kernel_RGB(in_data_ptr, out_data_ptr, inc, weights);
             out_data_ptr +=3;
         }

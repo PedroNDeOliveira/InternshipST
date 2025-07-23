@@ -29,7 +29,7 @@
  * --all-buffers-info = true
  * --mvei = true
  * --load-mdesc-file = "C:/ST/STEdgeAI/2.1/Utilities/configs/stm32n6"
- * --load-mpool-file = "C:/ST/STEdgeAI/2.1/Utilities/windows/targets/stm32/resources/my_mpools/palm_detector"
+ * --load-mpool-file = "C:/Users/nogueirp/x-cube-n6-ai-hand-landmarks/Model/my_mpools/palm_detector"
  * --cache-maintenance = true
  * --enable-virtual-mem-pools = true
  * --native-float = true
