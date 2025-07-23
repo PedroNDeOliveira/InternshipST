@@ -1166,11 +1166,11 @@ static void palm_detector_prepare_input(uint8_t *buffer, pd_model_info_t *info){
 
 	uint8_t *out_data = info->nn_in;
     uint8_t *in_data = buffer;
-    uint32_t stride_in = LCD_BG_WIDTH * DISPLAY_BPP;
-    uint32_t stride_out = PD_WIDTH * DISPLAY_BPP;
+    uint32_t stride_in = NN_WIDTH * NN_BPP;
+    uint32_t stride_out = PD_WIDTH * NN_BPP;
 
 	IPL_resize_bilinear_iu8ou8_with_strides_RGB(in_data, out_data, stride_in, stride_out,
-			LCD_BG_WIDTH, LCD_BG_HEIGHT, PD_WIDTH, PD_HEIGHT);
+			NN_WIDTH, NN_HEIGHT, PD_WIDTH, PD_HEIGHT);
 
 //	int idx = 0;
 
@@ -1644,24 +1644,16 @@ static void nn_thread_fct(void *arg)
     nn_period[1] = HAL_GetTick();
     nn_period_ms = nn_period[1] - nn_period[0];
 
-//    capture_buffer = bqueue_get_ready(&nn_input_queue);
-//    assert(capture_buffer);
-
     idx_for_resize = frame_event_nb_for_resize % DISPLAY_BUFFER_NB;
 
-//    output_buffer = bqueue_get_free(&nn_output_queue, 1);
-//    assert(output_buffer);
-//    out[0] = output_buffer;
-//    for (i = 1; i < NN_OUT_NB; i++)
-//      out[i] = out[i - 1] + ALIGN_VALUE(nn_out_len_user[i - 1], 32);
 
     /* run ATON inference */
     ts = HAL_GetTick();
 
-    if(turn_people_detection){
+    capture_buffer = bqueue_get_ready(&nn_input_queue);
+    assert(capture_buffer);
 
-        capture_buffer = bqueue_get_ready(&nn_input_queue);
-        assert(capture_buffer);
+    if(turn_people_detection){
 
         output_buffer = bqueue_get_free(&nn_output_queue, 1);
         assert(output_buffer);
@@ -1686,7 +1678,8 @@ static void nn_thread_fct(void *arg)
         assert(ret == pdTRUE);
     }
     else{
-    	int hands = palm_detector_run(lcd_bg_buffer[idx_for_resize], &pd_info, &pd_ms);
+    	int hands = palm_detector_run(capture_buffer, &pd_info, &pd_ms);
+    	bqueue_put_free(&nn_input_queue);
 
     	inf_ms = HAL_GetTick() - ts;
 
