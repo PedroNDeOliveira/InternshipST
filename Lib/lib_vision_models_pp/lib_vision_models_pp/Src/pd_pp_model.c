@@ -126,34 +126,38 @@ static int32_t pd_pp_decode(pd_model_pp_in_t *pInput,
   return AI_PD_POSTPROCESS_ERROR_NO;
 }
 
+
+// I've changed it.
 static int pd_pp_nms(pd_postprocess_out_t *pOutput,
                      pd_model_pp_static_param_t *pInput_static_param)
 {
   int hand_nb = 0;
-  int skip_box;
   float iou;
   pd_pp_box_t *pd_boxes = (pd_pp_box_t *)pOutput->pOutData;
   size_t box_nb =  pOutput->box_nb;
-
+  int skip_box[box_nb];
+  memset(skip_box, 0, sizeof(skip_box));
+  //printf("Boxes detected = %d \n \r", box_nb);
   /* first sort boxes by higher probability */
   qsort(pd_boxes, box_nb, sizeof(pd_pp_box_t), pd_pp_nms_comparator);
 
   /* then apply iou to filter them */
   for (size_t i = 0; i < box_nb; i++) {
-    skip_box = 0;
-    for (int j = 0; j < hand_nb; j++) {
+    if(skip_box[i])
+    	continue;
+    for (int j = 0; j < box_nb; j++) {
+    	if(j == i)
+    		continue;
       iou = pd_pp_compute_iou(&pd_boxes[i], &pd_boxes[j]);
+      //printf("IoU = %.6f entre %d et %d \n \r", iou, i, j);
       if (iou >= pInput_static_param->iou_threshold) {
-        skip_box = 1;
-        break;
+        skip_box[j] = 1;
       }
     }
-    if (skip_box)
-      continue;
 
     pd_boxes[hand_nb++] = pd_boxes[i];
   }
-
+  //printf("NB hands after NMS = %d \n \r", hand_nb);
   return hand_nb;
 }
 int32_t pd_model_pp_reset(pd_model_pp_static_param_t *pInput_static_param)
@@ -174,8 +178,7 @@ int32_t pd_model_pp_process(pd_model_pp_in_t *pInput,
   if (AI_PD_POSTPROCESS_ERROR_NO != ret) {
     return ret;
   }
-  pd_pp_nms(pOutput,
-            pInput_static_param);
+  pOutput->box_nb = pd_pp_nms(pOutput, pInput_static_param);
 
   return ret;
 }
