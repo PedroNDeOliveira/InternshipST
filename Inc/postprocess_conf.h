@@ -58,7 +58,7 @@ static const float32_t AI_OD_YOLOV2_PP_ANCHORS[2*AI_OD_YOLOV2_PP_NB_ANCHORS] = {
 #define AI_PD_MODEL_PP_NB_KEYPOINTS               (7)
 
 /* --------  Tuning below can be modified by the application --------- */
-#define AI_PD_MODEL_PP_CONF_THRESHOLD              (0.85f)
+#define AI_PD_MODEL_PP_CONF_THRESHOLD              (0.82f)
 #define AI_PD_MODEL_PP_IOU_THRESHOLD               (0.4f)
 #define AI_PD_MODEL_PP_MAX_BOXES_LIMIT             (20)
 // Until here

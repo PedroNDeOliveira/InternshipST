@@ -21,7 +21,7 @@
 #include <stdint.h>
 
 #ifdef STM32N6570_DK_REV
-#define CAMERA_FPS 20
+#define CAMERA_FPS 30
 #else
 #define CAMERA_FPS 30
 #endif

@@ -42,6 +42,7 @@ typedef struct {
   float32_t width;
   float32_t height;
   pd_pp_point_t *pKps; //[PD_KPS_NB];
+  uint32_t id; // It is not an output of post process. It's an output of the tracking algorithm that comes right after it.
 } pd_pp_box_t;
 
 

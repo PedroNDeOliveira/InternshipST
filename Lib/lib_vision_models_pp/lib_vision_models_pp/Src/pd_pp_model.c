@@ -19,6 +19,13 @@
 #include "vision_models_pp.h"
 #include "pd_pp_loc.h"
 
+#define AI_PD_MODEL_PP_MAX_BOXES_LIMIT 20
+#define MAX_FRAME_MISSES 20
+
+static pd_pp_box_t previous_boxes[AI_PD_MODEL_PP_MAX_BOXES_LIMIT];
+//static pd_pp_box_t *previous_output;
+static int previous_box_nb = 0;
+static int boxes_counter = 0;
 
 static int32_t pd_pp_nms_comparator(const void *arg1, const void *arg2)
 {
@@ -160,11 +167,46 @@ static int pd_pp_nms(pd_postprocess_out_t *pOutput,
   //printf("NB hands after NMS = %d \n \r", hand_nb);
   return hand_nb;
 }
+
 int32_t pd_model_pp_reset(pd_model_pp_static_param_t *pInput_static_param)
 {
   return AI_PD_POSTPROCESS_ERROR_NO;
 }
 
+static void pd_pp_tracking (pd_postprocess_out_t *curr_output){
+	int curr_box_nb = curr_output->box_nb;
+	pd_pp_box_t *curr_boxes = (pd_pp_box_t *)curr_output->pOutData;
+	float32_t iou;
+	float32_t threshold = 0.2f;
+	int matched = 0;
+	int not_missed[previous_box_nb];
+	for(int i = 0; i < curr_box_nb; i++){
+		for(int j = 0; j < previous_box_nb; j++){
+			iou = pd_pp_compute_iou(&curr_boxes[i], &previous_boxes[j]);
+			printf("IoU = %.6f \n \r", iou);
+			if(iou > threshold){
+				curr_boxes[i].id = previous_boxes[j].id; // Keep coordinates and ID.
+				matched = 1;
+				not_missed[j] = 1;
+			}
+		}
+		if(!matched){
+			curr_boxes[i].id = ++boxes_counter;
+		}
+	}
+
+//	// Allowing missed frame detections.
+//	for(int i = 0; i < previous_box_nb; i++){
+//		if(!not_missed[i]){ // Means that I hand that was detected in previous frame was not detected in this one.
+//
+//		}
+//	}
+
+	for(int i = 0; i < curr_box_nb; i++){
+		previous_boxes[i] = curr_boxes[i];
+	}
+	previous_box_nb = curr_box_nb;
+}
 
 int32_t pd_model_pp_process(pd_model_pp_in_t *pInput,
                             pd_postprocess_out_t *pOutput,
@@ -179,6 +221,7 @@ int32_t pd_model_pp_process(pd_model_pp_in_t *pInput,
     return ret;
   }
   pOutput->box_nb = pd_pp_nms(pOutput, pInput_static_param);
+  pd_pp_tracking(pOutput);
 
   return ret;
 }

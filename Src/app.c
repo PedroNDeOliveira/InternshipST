@@ -285,9 +285,10 @@ static const uint32_t colors[NUMBER_COLORS] = {
     UTIL_LCD_COLOR_BLUE,
     UTIL_LCD_COLOR_ORANGE
 };
+
 /* Lcd Background Buffer */
 static uint8_t lcd_bg_buffer[DISPLAY_BUFFER_NB][LCD_BG_WIDTH * LCD_BG_HEIGHT * DISPLAY_BPP] ALIGN_32 IN_PSRAM;
-static uint8_t lcd_bg_buffer_resized[192 * 192 * DISPLAY_BPP] ALIGN_32 IN_PSRAM; // Testing resizing operation.
+//static uint8_t lcd_bg_buffer_resized[192 * 192 * DISPLAY_BPP] ALIGN_32 IN_PSRAM; // Testing resizing operation.
 
 static int lcd_bg_buffer_disp_idx = 1;
 static int lcd_bg_buffer_capt_idx = 0;
@@ -472,6 +473,7 @@ static void copy_pd_box(pd_pp_box_t *dst, pd_pp_box_t *src)
   dst->y_center = src->y_center;
   dst->width = src->width;
   dst->height = src->height;
+  dst->id = src->id;
   for (i = 0 ; i < AI_PD_MODEL_PP_NB_KEYPOINTS; i++)
     dst->pKps[i] = src->pKps[i];
 }
@@ -728,7 +730,6 @@ static void display_pd_hand(pd_pp_box_t *hand)
   int x1, y1;
   int w, h;
   int i;
-
   /* display box around palm */
   xc = (int)hand->x_center;
   yc = (int)hand->y_center;
@@ -741,6 +742,7 @@ static void display_pd_hand(pd_pp_box_t *hand)
   clamp_point(&x0, &y0);
   clamp_point(&x1, &y1);
   UTIL_LCD_DrawRect(x0, y0, x1 - x0, y1 - y0, UTIL_LCD_COLOR_GREEN);
+  UTIL_LCDEx_PrintfAt(x0 + 1, y0 + 1, LEFT_MODE, "%3d", hand->id);
 
   /* display palm key points */
   for (i = 0; i < 7; i++) {
@@ -1200,6 +1202,7 @@ static void palm_detector_prepare_input(uint8_t *buffer, pd_model_info_t *info){
 //	}
 }
 
+
 static int palm_detector_run(uint8_t *buffer, pd_model_info_t *info, uint32_t *pd_exec_time)
 {
   uint32_t start_ts;
@@ -1234,10 +1237,11 @@ static int palm_detector_run(uint8_t *buffer, pd_model_info_t *info, uint32_t *p
   ret = app_postprocess_run_pd((void * []){info->prob_out, info->boxes_out}, 2, &info->pd_out, &info->static_param);
   assert(ret == AI_PD_POSTPROCESS_ERROR_NO);
   //printf("Palm detector post process finished. \n \r");
-
+  //
 
   CACHE_OP(SCB_InvalidateDCache_by_Addr(info->prob_out, info->prob_out_len));
   CACHE_OP(SCB_InvalidateDCache_by_Addr(info->boxes_out, info->boxes_out_len));
+
 
   hand_nb = MIN(info->pd_out.box_nb, PD_MAX_HAND_NB);
 
@@ -1256,7 +1260,8 @@ static int palm_detector_run(uint8_t *buffer, pd_model_info_t *info, uint32_t *p
 	  printf("X center = %.5f \n \r", box->x_center);
 	  printf("Y center = %.5f \n \r", box->y_center);
 	  printf("width = %.5f \n \r", box->width);
-	  printf("height = %.5f \n \n \n \n \r", box->height);
+	  printf("height = %.5f \n \r", box->height);
+	  printf("Id = %d \n \n \n \n \r", box->id);
 
 	  printf("\n\n\n \r");
 	  //}
