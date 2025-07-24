@@ -20,11 +20,15 @@
 #include "pd_pp_loc.h"
 
 #define AI_PD_MODEL_PP_MAX_BOXES_LIMIT 20
-#define MAX_FRAME_MISSES 20
+#define MAX_FRAME_MISSES 15
 
-static pd_pp_box_t previous_boxes[AI_PD_MODEL_PP_MAX_BOXES_LIMIT];
-//static pd_pp_box_t *previous_output;
-static int previous_box_nb = 0;
+typedef struct {
+	pd_pp_box_t box;
+	int32_t missed_frames;
+}tracked_box_t;
+
+static tracked_box_t tracked_boxes[AI_PD_MODEL_PP_MAX_BOXES_LIMIT];
+static int tracked_box_nb = 0;
 static int boxes_counter = 0;
 
 static int32_t pd_pp_nms_comparator(const void *arg1, const void *arg2)
@@ -173,39 +177,65 @@ int32_t pd_model_pp_reset(pd_model_pp_static_param_t *pInput_static_param)
   return AI_PD_POSTPROCESS_ERROR_NO;
 }
 
-static void pd_pp_tracking (pd_postprocess_out_t *curr_output){
-	int curr_box_nb = curr_output->box_nb;
-	pd_pp_box_t *curr_boxes = (pd_pp_box_t *)curr_output->pOutData;
-	float32_t iou;
-	float32_t threshold = 0.2f;
-	int matched = 0;
-	int not_missed[previous_box_nb];
-	for(int i = 0; i < curr_box_nb; i++){
-		for(int j = 0; j < previous_box_nb; j++){
-			iou = pd_pp_compute_iou(&curr_boxes[i], &previous_boxes[j]);
-			printf("IoU = %.6f \n \r", iou);
-			if(iou > threshold){
-				curr_boxes[i].id = previous_boxes[j].id; // Keep coordinates and ID.
-				matched = 1;
-				not_missed[j] = 1;
-			}
-		}
-		if(!matched){
-			curr_boxes[i].id = ++boxes_counter;
-		}
-	}
+static void pd_pp_tracking(pd_postprocess_out_t *curr_output) {
+    int curr_box_nb = curr_output->box_nb;
+    pd_pp_box_t *curr_boxes = (pd_pp_box_t *)curr_output->pOutData;
+    float32_t threshold = 0.3f;
+    float32_t iou;
 
-//	// Allowing missed frame detections.
-//	for(int i = 0; i < previous_box_nb; i++){
-//		if(!not_missed[i]){ // Means that I hand that was detected in previous frame was not detected in this one.
-//
-//		}
-//	}
+    int matched_curr[curr_box_nb];
+    memset(matched_curr, 0, sizeof(matched_curr));
+    int matched_prev[tracked_box_nb];
+    memset(matched_prev, 0, sizeof(matched_prev));
 
-	for(int i = 0; i < curr_box_nb; i++){
-		previous_boxes[i] = curr_boxes[i];
-	}
-	previous_box_nb = curr_box_nb;
+    // Match current detections to tracked boxes
+    for (int i = 0; i < curr_box_nb; i++) {
+        float best_iou = 0.0f;
+        int best_match = -1;
+
+        for (int j = 0; j < tracked_box_nb; j++) {
+            iou = pd_pp_compute_iou(&curr_boxes[i], &tracked_boxes[j].box);
+            if (iou > best_iou && iou > threshold && !matched_prev[j]) {
+                best_iou = iou;
+                best_match = j;
+            }
+        }
+
+        if (best_match != -1) {
+            // Match found
+            curr_boxes[i].id = tracked_boxes[best_match].box.id;
+            tracked_boxes[best_match].box = curr_boxes[i];
+            tracked_boxes[best_match].missed_frames = 0;
+            matched_curr[i] = 1;
+            matched_prev[best_match] = 1;
+        }
+    }
+
+    // Assign new IDs to unmatched detections
+    for (int i = 0; i < curr_box_nb; i++) {
+        if (!matched_curr[i]) {
+            curr_boxes[i].id = ++boxes_counter;
+			tracked_boxes[tracked_box_nb].box = curr_boxes[i];
+			tracked_boxes[tracked_box_nb].missed_frames = 0;
+			tracked_box_nb++;
+        }
+    }
+
+    // Increment missed frames for unmatched tracked boxes
+    for (int j = 0; j < tracked_box_nb; j++) {
+        if (!matched_prev[j]) {
+            tracked_boxes[j].missed_frames++;
+        }
+    }
+
+    // Remove expired tracks
+    int new_count = 0;
+    for (int j = 0; j < tracked_box_nb; j++) {
+        if (tracked_boxes[j].missed_frames <= MAX_FRAME_MISSES) {
+            tracked_boxes[new_count++] = tracked_boxes[j];
+        }
+    }
+    tracked_box_nb = new_count;
 }
 
 int32_t pd_model_pp_process(pd_model_pp_in_t *pInput,

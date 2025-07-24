@@ -108,7 +108,7 @@ void nema_enable_tiling(int);
 
 //added
 /* palm detector */
-#define PD_MAX_HAND_NB 1
+#define PD_MAX_HAND_NB 5
 
 #if HAS_ROTATION_SUPPORT == 1
 typedef float app_v3_t[3];
@@ -1076,7 +1076,7 @@ static void Display_NetworkOutput_Tracking(display_info_t *info)
 void display_hand(display_info_t *info, hand_info_t *hand)
 {
 	display_pd_hand(&hand->pd_hands);
-	display_roi(&hand->roi);
+	//display_roi(&hand->roi);
 }
 
 static void Display_NetworkOutput_PalmDetector(display_info_t *info){
@@ -1243,7 +1243,8 @@ static int palm_detector_run(uint8_t *buffer, pd_model_info_t *info, uint32_t *p
   CACHE_OP(SCB_InvalidateDCache_by_Addr(info->boxes_out, info->boxes_out_len));
 
 
-  hand_nb = MIN(info->pd_out.box_nb, PD_MAX_HAND_NB);
+  //hand_nb = MIN(info->pd_out.box_nb, PD_MAX_HAND_NB);
+  hand_nb = info->pd_out.box_nb;
 
 //  float32_t prob;
 //  float32_t x_center;
@@ -1617,7 +1618,7 @@ static void nn_thread_fct(void *arg)
 //  int i;
 
   /* Current tracking algo only support single hand */
-  assert(PD_MAX_HAND_NB == 1);
+  //assert(PD_MAX_HAND_NB == 1);
 
   /* setup models buffer info */
   people_detector_init(&people_info);
@@ -1695,9 +1696,11 @@ static void nn_thread_fct(void *arg)
         disp.info.nn_period_ms = inf_ms;
         disp.info.pd_hand_nb = hands;
         disp.info.pd_max_prob = pd_info.pd_out.pOutData[0].prob;
-        disp.info.hands[0].is_valid = hands;
-        copy_pd_box(&disp.info.hands[0].pd_hands, &pd_info.pd_out.pOutData[0]);
-        disp.info.hands[0].roi = rois[0];
+        for(int i = 0; i < hands; i++){
+            disp.info.hands[i].is_valid = 1;
+            copy_pd_box(&disp.info.hands[i].pd_hands, &pd_info.pd_out.pOutData[i]);
+            disp.info.hands[i].roi = rois[i];
+        }
         ret = xSemaphoreGive(disp.lock);
         assert(ret == pdTRUE);
 
