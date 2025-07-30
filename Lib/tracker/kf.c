@@ -23,8 +23,8 @@
 #include <string.h>
 
 #define kf_dt 1.0
-static const double std_weight_position = 1. / 20;
-static const double std_weight_velocity = 1. / 160;
+static const double std_weight_position = 1. / 10;
+static const double std_weight_velocity = 1. / 40;
 
 static const double motion_mat[2 * KF_DIM][2 * KF_DIM] = {
   {1, 0, 0, 0, kf_dt, 0,     0,     0},

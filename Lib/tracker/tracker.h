@@ -28,6 +28,7 @@ typedef struct {
   double track_thresh;
   double det_thresh;
   double sim1_thresh;
+  double dist1_thresh;
   double sim2_thresh;
   int tlost_cnt;
 } trk_conf_t;
@@ -72,6 +73,6 @@ typedef struct {
 } trk_ctx_t;
 
 int trk_init(trk_ctx_t *ctx, trk_conf_t *cfg, int trk_tbox_nb, trk_tbox_t *tboxes);
-int trk_update(trk_ctx_t *ctx, int trk_dbox_nb, trk_dbox_t *dboxes);
+int trk_update(trk_ctx_t *ctx, int trk_dbox_nb, trk_dbox_t *dboxes, int iou_score);
 
 #endif

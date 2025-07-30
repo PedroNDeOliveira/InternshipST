@@ -17,10 +17,13 @@
  */
 
 #include "tracker.h"
+#include "app_config.h"
 
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
+
+static const double BIG_DOUBLE = 9999999999999.0;
 
 typedef struct {
   double cx;
@@ -66,6 +69,13 @@ static double trk_compute_iou(trk_tbox_t *tbox, trk_dbox_t *dbox)
   U = trk_box_union(&boxa, &boxb);
 
   return I == 0 || U == 0 ? 0 : I / U;
+}
+
+static double trk_compute_euclidean_distance(trk_tbox_t *tbox, trk_dbox_t *dbox){
+	double xdist = (tbox->cx*LCD_BG_WIDTH - dbox->cx*LCD_BG_WIDTH)*(tbox->cx*LCD_BG_WIDTH - dbox->cx*LCD_BG_WIDTH);
+	double ydist = (tbox->cy*LCD_BG_HEIGHT - dbox->cy*LCD_BG_HEIGHT)*(tbox->cy*LCD_BG_HEIGHT - dbox->cy*LCD_BG_HEIGHT);
+
+	return sqrt(xdist + ydist);
 }
 
 static void trk_kalman_init(trk_tbox_t *tbox, trk_dbox_t *dbox)
@@ -179,12 +189,14 @@ static void trk_dbox_split(trk_ctx_t *ctx, int trk_dbox_nb, trk_dbox_t *dboxes)
   }
 }
 
-static void trk_matching_step1(trk_ctx_t *ctx)
+static void trk_matching_step1(trk_ctx_t *ctx, int iou_score)
 {
   trk_tbox_t *tbox, *ttmp, *tboxhigh;
   trk_dbox_t *dbox, *dtmp;
   double max_score;
   double score;
+  double distance;
+  double min_distance;
 
   /* move tracked box from ttracking/tlost to tremain */
   ulist_for_each_entry_safe(tbox, ttmp, &ctx->ttracking, list)
@@ -195,43 +207,87 @@ static void trk_matching_step1(trk_ctx_t *ctx)
   /* match tbox into tremain with dbox in dhigh */
   ulist_for_each_entry_safe(dbox, dtmp, &ctx->dhigh, list) {
     max_score = -1;
+    min_distance = BIG_DOUBLE;
     tboxhigh = NULL;
     ulist_for_each_entry_safe(tbox, ttmp, &ctx->tremain, list) {
-      score = trk_compute_iou(tbox, dbox) * dbox->conf;
-      if (score <= max_score)
-        continue;
-      max_score = score;
-      tboxhigh = tbox;
+
+      if(iou_score){
+          score = trk_compute_iou(tbox, dbox) * dbox->conf;
+          if (score <= max_score)
+            continue;
+          max_score = score;
+          tboxhigh = tbox;
+      }
+      else{
+          distance = trk_compute_euclidean_distance(tbox, dbox) * dbox->conf;
+          if (distance >= min_distance)
+            continue;
+          min_distance = distance;
+          tboxhigh = tbox;
+      }
+
     }
-    if (max_score < 1 - ctx->cfg.sim1_thresh)
-      continue;
-    trk_tbox_continue_tracking(ctx, tboxhigh, dbox);
-    ulist_del(&dbox->list);
+
+    if(iou_score){
+        if (max_score < 1 - ctx->cfg.sim1_thresh)
+          continue;
+        trk_tbox_continue_tracking(ctx, tboxhigh, dbox);
+        ulist_del(&dbox->list);
+    }
+    else{
+        if (min_distance > ctx->cfg.dist1_thresh)
+          continue;
+        trk_tbox_continue_tracking(ctx, tboxhigh, dbox);
+        ulist_del(&dbox->list);
+    }
   }
+
 }
 
-static void trk_matching_step2(trk_ctx_t *ctx)
+static void trk_matching_step2(trk_ctx_t *ctx, int iou_score)
 {
   trk_tbox_t *tbox, *ttmp, *tboxhigh;
   trk_dbox_t *dbox, *dtmp;
   double max_score;
   double score;
+  double min_distance;
+  double distance;
 
   /* match tbox into tremain with dbox in dlow */
   ulist_for_each_entry_safe(dbox, dtmp, &ctx->dlow, list) {
     max_score = -1;
+    min_distance = BIG_DOUBLE;
     tboxhigh = NULL;
     ulist_for_each_entry_safe(tbox, ttmp, &ctx->tremain, list) {
-      score = trk_compute_iou(tbox, dbox);
-      if (score <= max_score)
-        continue;
-      max_score = score;
-      tboxhigh = tbox;
+
+        if(iou_score){
+            score = trk_compute_iou(tbox, dbox);
+            if (score <= max_score)
+              continue;
+            max_score = score;
+            tboxhigh = tbox;
+        }
+        else{
+            distance = trk_compute_euclidean_distance(tbox, dbox);
+            if (distance >= min_distance)
+              continue;
+            min_distance = distance;
+            tboxhigh = tbox;
+        }
+
     }
-    if (max_score < ctx->cfg.sim2_thresh)
-      continue;
-    trk_tbox_continue_tracking(ctx, tboxhigh, dbox);
-    ulist_del(&dbox->list);
+    if(iou_score){
+        if (max_score < 1 - ctx->cfg.sim2_thresh)
+          continue;
+        trk_tbox_continue_tracking(ctx, tboxhigh, dbox);
+        ulist_del(&dbox->list);
+    }
+    else{
+        if (min_distance > ctx->cfg.dist1_thresh)
+          continue;
+        trk_tbox_continue_tracking(ctx, tboxhigh, dbox);
+        ulist_del(&dbox->list);
+    }
   }
 }
 
@@ -280,12 +336,12 @@ int trk_init(trk_ctx_t *ctx, trk_conf_t *cfg, int trk_tbox_nb, trk_tbox_t *tboxe
   return 0;
 }
 
-int trk_update(trk_ctx_t *ctx, int trk_dbox_nb, trk_dbox_t *dboxes)
+int trk_update(trk_ctx_t *ctx, int trk_dbox_nb, trk_dbox_t *dboxes, int iou_score)
 {
   trk_kalman_pred_tboxes(ctx);
   trk_dbox_split(ctx, trk_dbox_nb, dboxes);
-  trk_matching_step1(ctx);
-  trk_matching_step2(ctx);
+  trk_matching_step1(ctx, iou_score);
+  trk_matching_step2(ctx, iou_score);
   trk_update_tlost(ctx);
   trk_add_new_tracks(ctx);
 
