@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32n6xx_hal.h"
 #include "stm32n6xx_it.h"
+#include "stm32n6570_discovery.h"
 
 #include "cmw_camera.h"
 
@@ -97,4 +98,8 @@ void CSI_IRQHandler(void)
 void DCMIPP_IRQHandler(void)
 {
   HAL_DCMIPP_IRQHandler(CMW_CAMERA_GetDCMIPPHandle());
+}
+
+void EXTI0_IRQHandler(void){
+	BSP_PB_IRQHandler(BUTTON_TAMP);
 }

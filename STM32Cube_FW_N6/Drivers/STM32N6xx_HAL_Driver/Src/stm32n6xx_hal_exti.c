@@ -510,7 +510,6 @@ void HAL_EXTI_IRQHandler(const EXTI_HandleTypeDef *hexti)
   uint32_t regval;
   uint32_t maskline;
   uint32_t offset;
-
   /* Compute line register offset and line mask */
   offset = ((hexti->Line & EXTI_REG_MASK) >> EXTI_REG_SHIFT);
   maskline = (1UL << (hexti->Line & EXTI_PIN_MASK));

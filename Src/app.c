@@ -288,6 +288,7 @@ static const uint32_t colors[NUMBER_COLORS] = {
 
 /* Lcd Background Buffer */
 static uint8_t lcd_bg_buffer[DISPLAY_BUFFER_NB][LCD_BG_WIDTH * LCD_BG_HEIGHT * DISPLAY_BPP] ALIGN_32 IN_PSRAM;
+static uint8_t lcd_bg_buffer_const_black[LCD_BG_WIDTH * LCD_BG_HEIGHT * DISPLAY_BPP] ALIGN_32 IN_PSRAM;
 //static uint8_t lcd_bg_buffer_resized[192 * 192 * DISPLAY_BPP] ALIGN_32 IN_PSRAM; // Testing resizing operation.
 
 static int lcd_bg_buffer_disp_idx = 1;
@@ -344,6 +345,11 @@ static StackType_t isp_thread_stack[2 *configMINIMAL_STACK_SIZE];
 static SemaphoreHandle_t isp_sem;
 static StaticSemaphore_t isp_sem_buffer;
 
+static TaskHandle_t nn;
+static TaskHandle_t pp;
+static TaskHandle_t dp;
+static TaskHandle_t isp;
+
 /* tracking state */
 #ifdef TRACKER_MODULE
 //People detection
@@ -356,6 +362,9 @@ static trk_dbox_t dboxes_pd[AI_OD_PP_MAX_BOXES_LIMIT];
 static trk_ctx_t trk_ctx_pd;
 #endif
 
+
+//Start and stop program execution
+static int start_program = 0;
 
 #if HAS_ROTATION_SUPPORT == 1
 static GFXMMU_HandleTypeDef hgfxmmu;
@@ -429,10 +438,10 @@ static void cvt_pd_coord_to_screen_coord(pd_pp_box_t *box)
   box->y_center *= LCD_BG_HEIGHT;
   box->width *= LCD_BG_WIDTH;
   box->height *= LCD_BG_HEIGHT;
-//  for (i = 0; i < AI_PD_MODEL_PP_NB_KEYPOINTS; i++) {
-//    box->pKps[i].x *= LCD_BG_WIDTH;
-//    box->pKps[i].y *= LCD_BG_HEIGHT;
-//  }
+  for (i = 0; i < AI_PD_MODEL_PP_NB_KEYPOINTS; i++) {
+    box->pKps[i].x *= LCD_BG_WIDTH;
+    box->pKps[i].y *= LCD_BG_HEIGHT;
+  }
 }
 
 static void roi_shift_and_scale(roi_t *roi, float shift_x, float shift_y, float scale_x, float scale_y)
@@ -480,6 +489,7 @@ static void copy_trk_box_to_pd_box(pd_pp_box_t *dst, trk_tbox_t *src){
 	dst->width = src->w;
 	dst->height = src->h;
 	dst->id = src->id;
+	dst->pKps = src->dbox_userdata;
 }
 
 static void copy_pd_box(pd_pp_box_t *dst, pd_pp_box_t *src)
@@ -643,8 +653,12 @@ static void reload_bg_layer(int next_disp_idx)
 {
   int ret;
 
-  ret = SCRL_SetAddress_NoReload(lcd_bg_buffer[next_disp_idx], SCRL_LAYER_0); // Changed it here.
-  //ret = SCRL_SetAddress_NoReload(lcd_bg_buffer_resized, SCRL_LAYER_0);
+  if(start_program){
+	  ret = SCRL_SetAddress_NoReload(lcd_bg_buffer[next_disp_idx], SCRL_LAYER_0); // Changed it here.
+  }
+  else{
+	  ret = SCRL_SetAddress_NoReload(lcd_bg_buffer_const_black, SCRL_LAYER_0);
+  }
   assert(ret == 0);
   ret = SCRL_ReloadLayer(SCRL_LAYER_0);
   assert(ret == 0);
@@ -763,15 +777,15 @@ static void display_pd_hand(pd_pp_box_t *hand)
   UTIL_LCD_DrawRect(x0, y0, x1 - x0, y1 - y0, UTIL_LCD_COLOR_GREEN);
   UTIL_LCDEx_PrintfAt(x0 + 1, y0 + 1, LEFT_MODE, "%3d", hand->id);
 
-//  /* display palm key points */
-//  for (i = 0; i < 7; i++) {
-//    uint32_t color = (i != 0 && i != 2) ? UTIL_LCD_COLOR_RED : UTIL_LCD_COLOR_BLUE;
-//
-//    x0 = (int)hand->pKps[i].x;
-//    y0 = (int)hand->pKps[i].y;
-//    clamp_point(&x0, &y0);
-//    UTIL_LCD_FillCircle(x0, y0, 2, color);
-//  }
+  /* display palm key points */
+  for (i = 0; i < 7; i++) {
+    uint32_t color = (i != 0 && i != 2) ? UTIL_LCD_COLOR_RED : UTIL_LCD_COLOR_BLUE;
+
+    x0 = (int)hand->pKps[i].x;
+    y0 = (int)hand->pKps[i].y;
+    clamp_point(&x0, &y0);
+    UTIL_LCD_FillCircle(x0, y0, 2, color);
+  }
 }
 
 static void rotate_point(float pt[2], float rotation)
@@ -1099,68 +1113,84 @@ void display_hand(display_info_t *info, hand_info_t *hand)
 }
 
 static void Display_NetworkOutput_PalmDetector(display_info_t *info){
-	  float cpu_load_one_second;
-	  int line_nb = 0;
-	  float nn_fps;
-	  int i;
+	float cpu_load_one_second;
+	int line_nb = 0;
+	float nn_fps;
+	int i;
 
-	  /* clear previous ui */
-	  UTIL_LCD_FillRect(lcd_fg_area.X0, lcd_fg_area.Y0, lcd_fg_area.XSize, lcd_fg_area.YSize, 0x00000000); /* Clear previous boxes */
+	/* clear previous ui */
+	UTIL_LCD_FillRect(lcd_fg_area.X0, lcd_fg_area.Y0, lcd_fg_area.XSize, lcd_fg_area.YSize, 0x00000000); /* Clear previous boxes */
 
-	  /* cpu load */
-	  cpuload_update(&cpu_load);
-	  cpuload_get_info(&cpu_load, NULL, &cpu_load_one_second, NULL);
+	/* cpu load */
+	cpuload_update(&cpu_load);
+	cpuload_get_info(&cpu_load, NULL, &cpu_load_one_second, NULL);
 
-	  /* draw metrics */
-	  nn_fps = 1000.0 / info->nn_period_ms;
-	  UTIL_LCDEx_PrintfAt(0, LINE(line_nb),  RIGHT_MODE, "Cpu load");
-	  line_nb += 1;
-	  UTIL_LCDEx_PrintfAt(0, LINE(line_nb),  RIGHT_MODE, "   %.1f%%", cpu_load_one_second);
-	  line_nb += 2;
-	  UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, "Inferences");
-	  line_nb += 1;
-	  UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, " pd %2ums", info->pd_ms);
-	  line_nb += 1;
-	  UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, " hl %2ums", info->hl_ms);
-	  line_nb += 2;
-	  UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, "  %.1f FPS", nn_fps);
-	  line_nb += 2;
-	  if (DBG_INFO) {
-	    UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, "Display");
-	    line_nb += 1;
-	    UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, "   %ums", info->disp_ms);
-	    line_nb += 1;
-	  }
-
-	  /* display palm detector output */
-	  for (i = 0; i < info->pd_hand_nb; i++) {
-	    if (info->hands[i].is_valid){
-	    	printf("Printing hand. \n \r");
-	      	display_hand(info, &info->hands[i]);
-	    }
-	  }
-
-	  if (DBG_INFO)
-	    UTIL_LCDEx_PrintfAt(0, LINE(line_nb),  RIGHT_MODE, "pd : %5.1f %%", info->pd_max_prob * 100);
+	/* draw metrics */
+	nn_fps = 1000.0 / info->nn_period_ms;
+	UTIL_LCDEx_PrintfAt(0, LINE(line_nb),  RIGHT_MODE, "Cpu load");
+	line_nb += 1;
+	UTIL_LCDEx_PrintfAt(0, LINE(line_nb),  RIGHT_MODE, "   %.1f%%", cpu_load_one_second);
+	line_nb += 2;
+	UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, "Inferences");
+	line_nb += 1;
+	UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, " pd %2ums", info->pd_ms);
+	line_nb += 1;
+	UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, " hl %2ums", info->hl_ms);
+	line_nb += 2;
+	UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, "  %.1f FPS", nn_fps);
+	line_nb += 2;
+	if (DBG_INFO) {
+		UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, "Display");
+		line_nb += 1;
+		UTIL_LCDEx_PrintfAt(0, LINE(line_nb), RIGHT_MODE, "   %ums", info->disp_ms);
+		line_nb += 1;
 	}
+
+	/* display palm detector output */
+	for (i = 0; i < info->pd_hand_nb; i++) {
+		if (info->hands[i].is_valid){
+			printf("Printing hand. \n \r");
+			display_hand(info, &info->hands[i]);
+		}
+	}
+
+	if (DBG_INFO)
+		UTIL_LCDEx_PrintfAt(0, LINE(line_nb),  RIGHT_MODE, "pd : %5.1f %%", info->pd_max_prob * 100);
+}
+
+
+static void Display_Start_Screen(){
+	int line_nb = 10;
+
+	printf("Display start screen. \n \r");
+	/* clear previous ui */
+	UTIL_LCD_FillRect(lcd_fg_area.X0, lcd_fg_area.Y0, lcd_fg_area.XSize, lcd_fg_area.YSize, 0x00000000); /* Clear previous boxes */
+
+	/* draw metrics */
+	UTIL_LCDEx_PrintfAt(0, LINE(line_nb),  CENTER_MODE, "Welcome to the Edge AI Computer Vision Demo!");
+	line_nb += 2;
+	UTIL_LCDEx_PrintfAt(0, LINE(line_nb),  CENTER_MODE, "Press BUTTON TAMP to start execution.");
+}
 
 static void Display_NetworkOutput(display_info_t *info)
 {
-	if(turn_people_detection){
-	  if (info->tracking_enabled)
-		Display_NetworkOutput_Tracking(info);
-	  else
-		Display_NetworkOutput_NoTracking(info);
+	if(start_program){
+		if(turn_people_detection){
+		  if (info->tracking_enabled)
+			Display_NetworkOutput_Tracking(info);
+		  else
+			Display_NetworkOutput_NoTracking(info);
+		}
+		else{
+			//printf("Running Palm Detector Display. \n \r");
+			Display_NetworkOutput_PalmDetector(info);
+		}
 	}
 	else{
-		//printf("Running Palm Detector Display. \n \r");
-		Display_NetworkOutput_PalmDetector(info);
+		//clear_bg();
+		Display_Start_Screen();
 	}
 }
-
-// Added
-
-
 
 static void palm_detector_init(pd_model_info_t *info)
 {
@@ -1229,6 +1259,7 @@ static void roi_to_dbox_pd(pd_pp_box_t *roi, trk_dbox_t *dbox)
   dbox->cy = roi->y_center;
   dbox->w = roi->width;
   dbox->h = roi->height;
+  dbox->userdata =roi->pKps;
 }
 
 static int app_tracking_pd(pd_postprocess_out_t *pp)
@@ -1626,15 +1657,14 @@ static void people_detector_run(uint8_t *buffer_in, uint8_t *buffer_out[NN_OUT_N
 
 static void on_pd_toggle_button_click(void *args)
 {
-  //display_t *disp = (display_t *) args;
-  turn_people_detection = !turn_people_detection;
-  printf("Button pressed. \n \r");
-
-//  ret = xSemaphoreTake(disp->lock, portMAX_DELAY);
-//  assert(ret == pdTRUE);
-//  disp->info.is_pd_displayed = !disp->info.is_pd_displayed;
-//  ret = xSemaphoreGive(disp->lock);
-//  assert(ret == pdTRUE);
+	if(!start_program){
+		start_program = 1;
+		printf("TAMP button pressed - START PROGRAM EXECUTION. \n \r");
+	}
+	else{
+		start_program = 0;
+		printf("TAMP button pressed - STOP PROGRAM EXECUTION. \n \r");
+	}
 }
 
 static void nn_thread_fct(void *arg)
@@ -1645,7 +1675,9 @@ static void nn_thread_fct(void *arg)
   pd_model_info_t pd_info;
 
 #ifdef STM32N6570_DK_REV
-  button_init(&hd_toggle_button, BUTTON_TAMP, on_pd_toggle_button_click, &disp);
+  //button_init(&hd_toggle_button, BUTTON_TAMP, on_pd_toggle_button_click, &disp);
+  int retn = BSP_PB_Init(BUTTON_TAMP, BUTTON_MODE_EXTI);
+  assert(retn == BSP_ERROR_NONE);
 #endif
 
   uint32_t nn_period_ms;
@@ -1681,6 +1713,10 @@ static void nn_thread_fct(void *arg)
   while (1)
   {
 	button_process(&hd_toggle_button);
+	if(!start_program){
+		xSemaphoreGive(disp.update);
+		continue;
+	}
 
     uint8_t *capture_buffer;
     uint8_t *out[NN_OUT_NB];
@@ -1948,32 +1984,34 @@ static void dp_commit_drawing_area()
 
 static void dp_thread_fct(void *arg)
 {
-  uint32_t disp_ms = 0;
-  display_info_t info;
-  uint32_t ts;
-  int ret;
+	uint32_t disp_ms = 0;
+	display_info_t info;
+	uint32_t ts;
+	int ret;
 
-  while (1)
-  {
-	//printf("Display after semaphore. \n \r");
-    ret = xSemaphoreTake(disp.update, portMAX_DELAY);
-    assert(ret == pdTRUE);
-    //printf("Display before semaphore. \n \r");
+	while (1)
+	{
+		//printf("Display after semaphore. \n \r");
+		if(start_program){
+			ret = xSemaphoreTake(disp.update, portMAX_DELAY);
+			assert(ret == pdTRUE);
+			//printf("Display before semaphore. \n \r");
 
-    ret = xSemaphoreTake(disp.lock, portMAX_DELAY);
-    assert(ret == pdTRUE);
-    info = disp.info;
-    ret = xSemaphoreGive(disp.lock);
-    assert(ret == pdTRUE);
-    info.disp_ms = disp_ms;
+			ret = xSemaphoreTake(disp.lock, portMAX_DELAY);
+			assert(ret == pdTRUE);
+			info = disp.info;
+			ret = xSemaphoreGive(disp.lock);
+			assert(ret == pdTRUE);
+			info.disp_ms = disp_ms;
+		}
 
-    ts = HAL_GetTick();
-    dp_update_drawing_area();
-    Display_NetworkOutput(&info); // This is what I have to change.
-    SCB_CleanDCache_by_Addr(lcd_fg_buffer[lcd_fg_buffer_rd_idx], LCD_FG_WIDTH * LCD_FG_HEIGHT* 2);
-    dp_commit_drawing_area();
-    disp_ms = HAL_GetTick() - ts;
-  }
+		ts = HAL_GetTick();
+		dp_update_drawing_area();
+		Display_NetworkOutput(&info); // This is what I have to change.
+		SCB_CleanDCache_by_Addr(lcd_fg_buffer[lcd_fg_buffer_rd_idx], LCD_FG_WIDTH * LCD_FG_HEIGHT* 2);
+		dp_commit_drawing_area();
+		disp_ms = HAL_GetTick() - ts;
+	}
 }
 
 static void isp_thread_fct(void *arg)
@@ -2022,6 +2060,9 @@ static void Display_init()
   UTIL_LCD_Clear(UTIL_LCD_COLOR_TRANSPARENT);
   UTIL_LCD_SetFont(&LCD_FONT);
   UTIL_LCD_SetTextColor(UTIL_LCD_COLOR_WHITE);
+
+  // Setting black screen.
+  memset(lcd_bg_buffer_const_black, 0, sizeof(lcd_bg_buffer_const_black));
 }
 
 //static void Display_init()
@@ -2067,7 +2108,6 @@ void app_run()
   UBaseType_t dp_priority = FREERTOS_PRIORITY(-2);
   UBaseType_t nn_priority = FREERTOS_PRIORITY(1);
   //UBaseType_t nn_hand_priority = FREERTOS_PRIORITY(1);
-  TaskHandle_t hdl;
   int ret;
 
   printf("Init application\n");
@@ -2116,19 +2156,43 @@ void app_run()
   CAM_DisplayPipe_Start(lcd_bg_buffer[0], CMW_MODE_CONTINUOUS);
 
   /* threads init */
-  hdl = xTaskCreateStatic(nn_thread_fct, "nn", configMINIMAL_STACK_SIZE * 2, NULL, nn_priority, nn_thread_stack,
+  nn = xTaskCreateStatic(nn_thread_fct, "nn", configMINIMAL_STACK_SIZE * 2, NULL, nn_priority, nn_thread_stack,
                           &nn_thread);
-  assert(hdl != NULL);
-  hdl = xTaskCreateStatic(pp_thread_fct, "pp", configMINIMAL_STACK_SIZE * 2, NULL, pp_priority, pp_thread_stack,
+  assert(nn != NULL);
+  pp = xTaskCreateStatic(pp_thread_fct, "pp", configMINIMAL_STACK_SIZE * 2, NULL, pp_priority, pp_thread_stack,
                           &pp_thread);
-  assert(hdl != NULL);
-  hdl = xTaskCreateStatic(dp_thread_fct, "dp", configMINIMAL_STACK_SIZE * 2, NULL, dp_priority, dp_thread_stack,
+  assert(pp != NULL);
+  dp = xTaskCreateStatic(dp_thread_fct, "dp", configMINIMAL_STACK_SIZE * 2, NULL, dp_priority, dp_thread_stack,
                           &dp_thread);
-  assert(hdl != NULL);
-  hdl = xTaskCreateStatic(isp_thread_fct, "isp", configMINIMAL_STACK_SIZE * 2, NULL, isp_priority, isp_thread_stack,
+  assert(dp != NULL);
+  isp = xTaskCreateStatic(isp_thread_fct, "isp", configMINIMAL_STACK_SIZE * 2, NULL, isp_priority, isp_thread_stack,
                           &isp_thread);
-  assert(hdl != NULL);
+  assert(isp != NULL);
+
+//  vTaskSuspend(nn);
+//  vTaskSuspend(pp);
+//  vTaskSuspend(isp);
+//
+//  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+//  xSemaphoreGiveFromISR(disp.update,&xHigherPriorityTaskWoken);
+//  xSemaphoreGiveFromISR(disp.lock,&xHigherPriorityTaskWoken);
 }
+
+//static void load_Bg_Black_Screen(){
+//  int ret;
+//
+//  ret = SCRL_SetAddress_NoReload(lcd_bg_buffer_const_black, SCRL_LAYER_0);
+//
+//  assert(ret == 0);
+//  ret = SCRL_ReloadLayer(SCRL_LAYER_0);
+//  assert(ret == 0);
+//
+//  ret = SRCL_Update();
+//  assert(ret == 0);
+//
+//}
+
+// CALLBACK FUNCTIONS
 
 int CMW_CAMERA_PIPE_FrameEventCallback(uint32_t pipe)
 {
@@ -2147,3 +2211,26 @@ int CMW_CAMERA_PIPE_VsyncEventCallback(uint32_t pipe)
 
   return HAL_OK;
 }
+
+void BSP_PB_Callback(Button_TypeDef Button){
+	if(Button == BUTTON_TAMP){
+		printf("Button TAMP pressed. \n \r");
+		if(start_program){
+			BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+			start_program = 0;
+			vTaskSuspend(nn);
+			vTaskSuspend(pp);
+			vTaskSuspend(isp);
+			xSemaphoreGiveFromISR(disp.update,&xHigherPriorityTaskWoken);
+			xSemaphoreGiveFromISR(disp.lock,&xHigherPriorityTaskWoken);
+		}
+		else{
+			start_program = 1;
+			vTaskResume(nn);
+			vTaskResume(pp);
+			vTaskResume(isp);
+		}
+	}
+}
+
+

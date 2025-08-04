@@ -46,12 +46,14 @@ Src/stm32n6xx_it.o: C:/Users/nogueirp/CES_Demo/Src/stm32n6xx_it.c \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_xspi.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_cacheaxi.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_gpu2d.h \
- ../../../Inc/stm32n6xx_it.h ../../../Lib/Camera_Middleware/cmw_camera.h \
+ ../../../Inc/stm32n6xx_it.h \
+ ../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery.h \
+ ../../../Inc/stm32n6570_discovery_conf.h \
+ ../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_errno.h \
+ ../../../Lib/Camera_Middleware/cmw_camera.h \
  ../../../Lib/Camera_Middleware/cmw_errno.h \
  ../../../Inc/cmw_camera_conf.h \
  ../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.h \
- ../../../Inc/stm32n6570_discovery_conf.h \
- ../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_errno.h \
  ../../../Lib/Camera_Middleware/sensors/cmw_sensors_if.h \
  ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_core.h \
  ../../../Inc/isp_conf.h \
@@ -104,12 +106,13 @@ Src/stm32n6xx_it.o: C:/Users/nogueirp/CES_Demo/Src/stm32n6xx_it.c \
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_cacheaxi.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_gpu2d.h:
 ../../../Inc/stm32n6xx_it.h:
+../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery.h:
+../../../Inc/stm32n6570_discovery_conf.h:
+../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_errno.h:
 ../../../Lib/Camera_Middleware/cmw_camera.h:
 ../../../Lib/Camera_Middleware/cmw_errno.h:
 ../../../Inc/cmw_camera_conf.h:
 ../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.h:
-../../../Inc/stm32n6570_discovery_conf.h:
-../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_errno.h:
 ../../../Lib/Camera_Middleware/sensors/cmw_sensors_if.h:
 ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_core.h:
 ../../../Inc/isp_conf.h:

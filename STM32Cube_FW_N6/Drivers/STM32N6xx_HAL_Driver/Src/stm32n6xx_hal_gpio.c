@@ -675,6 +675,7 @@ HAL_StatusTypeDef HAL_GPIO_GetDelay(const GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin
   */
 void HAL_GPIO_EXTI_IRQHandler(uint16_t GPIO_Pin)
 {
+printf("here. \n \r");
   /* EXTI line interrupt detected */
   if (__HAL_GPIO_EXTI_GET_RISING_IT(GPIO_Pin) != 0x00u)
   {
