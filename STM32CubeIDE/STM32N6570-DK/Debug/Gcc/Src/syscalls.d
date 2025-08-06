@@ -1,1 +1,1 @@
-Gcc/Src/syscalls.o: C:/Users/nogueirp/CES_Demo/Gcc/Src/syscalls.c
+Gcc/Src/syscalls.o: C:/Users/nogueirp/InternshipST/Gcc/Src/syscalls.c

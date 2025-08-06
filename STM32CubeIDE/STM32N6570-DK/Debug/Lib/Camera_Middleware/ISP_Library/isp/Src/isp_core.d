@@ -1,5 +1,5 @@
 Lib/Camera_Middleware/ISP_Library/isp/Src/isp_core.o: \
- C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/ISP_Library/isp/Src/isp_core.c \
+ C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/ISP_Library/isp/Src/isp_core.c \
  ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_core.h \
  ../../../Inc/isp_conf.h \
  ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_platform.h \

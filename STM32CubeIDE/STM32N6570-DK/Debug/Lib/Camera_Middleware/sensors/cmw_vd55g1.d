@@ -1,7 +1,7 @@
 Lib/Camera_Middleware/sensors/cmw_vd55g1.o: \
- C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/sensors/cmw_vd55g1.c \
- C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/sensors/cmw_vd55g1.h \
- C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/sensors/cmw_sensors_if.h \
+ C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_vd55g1.c \
+ C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_vd55g1.h \
+ C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_sensors_if.h \
  ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_core.h \
  ../../../Inc/isp_conf.h \
  ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_platform.h \
@@ -61,8 +61,8 @@ Lib/Camera_Middleware/sensors/cmw_vd55g1.o: \
  ../../../Inc/stm32n6570_discovery_conf.h \
  ../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_errno.h \
  ../../../Lib/Camera_Middleware/sensors/cmw_sensors_if.h
-C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/sensors/cmw_vd55g1.h:
-C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/sensors/cmw_sensors_if.h:
+C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_vd55g1.h:
+C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_sensors_if.h:
 ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_core.h:
 ../../../Inc/isp_conf.h:
 ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_platform.h:

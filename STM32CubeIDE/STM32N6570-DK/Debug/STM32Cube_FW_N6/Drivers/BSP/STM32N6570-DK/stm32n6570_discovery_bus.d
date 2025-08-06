@@ -1,6 +1,6 @@
 STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.o: \
- C:/Users/nogueirp/CES_Demo/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.c \
- C:/Users/nogueirp/CES_Demo/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.h \
+ C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.c \
+ C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.h \
  ../../../Inc/stm32n6570_discovery_conf.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h \
  ../../../Inc/stm32n6xx_hal_conf.h \
@@ -49,8 +49,8 @@ STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.o: \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_xspi.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_cacheaxi.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_gpu2d.h \
- C:/Users/nogueirp/CES_Demo/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_errno.h
-C:/Users/nogueirp/CES_Demo/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.h:
+ C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_errno.h
+C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.h:
 ../../../Inc/stm32n6570_discovery_conf.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h:
 ../../../Inc/stm32n6xx_hal_conf.h:
@@ -99,4 +99,4 @@ C:/Users/nogueirp/CES_Demo/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_xspi.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_cacheaxi.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_gpu2d.h:
-C:/Users/nogueirp/CES_Demo/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_errno.h:
+C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_errno.h:

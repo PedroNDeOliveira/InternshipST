@@ -1,4 +1,4 @@
-Model/network.o: C:/Users/nogueirp/CES_Demo/Model/network.c \
+Model/network.o: C:/Users/nogueirp/InternshipST/Model/network.c \
  ../../../Lib/AI_Runtime/Npu/ll_aton/ll_aton_NN_interface.h \
  ../../../Lib/AI_Runtime/Npu/ll_aton/ll_aton_config.h \
  ../../../Lib/AI_Runtime/Npu/ll_aton/ll_aton_attributes.h \
@@ -83,7 +83,7 @@ Model/network.o: C:/Users/nogueirp/CES_Demo/Model/network.c \
  ../../../Lib/AI_Runtime/Npu/ll_aton/ll_sw_integer.h \
  ../../../Lib/AI_Runtime/Npu/ll_aton/ecloader.h \
  ../../../Lib/AI_Runtime/Npu/ll_aton/ec.h \
- C:/Users/nogueirp/CES_Demo/Model/network_ecblobs.h \
+ C:/Users/nogueirp/InternshipST/Model/network_ecblobs.h \
  ../../../Lib/AI_Runtime/Npu/ll_aton/ll_aton_caches_interface.h
 ../../../Lib/AI_Runtime/Npu/ll_aton/ll_aton_NN_interface.h:
 ../../../Lib/AI_Runtime/Npu/ll_aton/ll_aton_config.h:
@@ -169,5 +169,5 @@ Model/network.o: C:/Users/nogueirp/CES_Demo/Model/network.c \
 ../../../Lib/AI_Runtime/Npu/ll_aton/ll_sw_integer.h:
 ../../../Lib/AI_Runtime/Npu/ll_aton/ecloader.h:
 ../../../Lib/AI_Runtime/Npu/ll_aton/ec.h:
-C:/Users/nogueirp/CES_Demo/Model/network_ecblobs.h:
+C:/Users/nogueirp/InternshipST/Model/network_ecblobs.h:
 ../../../Lib/AI_Runtime/Npu/ll_aton/ll_aton_caches_interface.h:

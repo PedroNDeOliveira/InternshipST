@@ -1,5 +1,5 @@
 Lib/lib_vision_models_pp/lib_vision_models_pp/Src/od_pp_yolov8.o: \
- C:/Users/nogueirp/CES_Demo/Lib/lib_vision_models_pp/lib_vision_models_pp/Src/od_pp_yolov8.c \
+ C:/Users/nogueirp/InternshipST/Lib/lib_vision_models_pp/lib_vision_models_pp/Src/od_pp_yolov8.c \
  ../../../Lib/lib_vision_models_pp/lib_vision_models_pp/Inc/od_pp_loc.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math_types.h \
@@ -34,7 +34,7 @@ Lib/lib_vision_models_pp/lib_vision_models_pp/Src/od_pp_yolov8.o: \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h \
  ../../../Lib/lib_vision_models_pp/lib_vision_models_pp/Inc/od_yolov8_pp_if.h \
  ../../../Lib/lib_vision_models_pp/lib_vision_models_pp/Inc/od_pp_output_if.h \
- C:/Users/nogueirp/CES_Demo/Lib/lib_vision_models_pp/lib_vision_models_pp/Src/vision_models_pp.h
+ C:/Users/nogueirp/InternshipST/Lib/lib_vision_models_pp/lib_vision_models_pp/Src/vision_models_pp.h
 ../../../Lib/lib_vision_models_pp/lib_vision_models_pp/Inc/od_pp_loc.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math_types.h:
@@ -69,4 +69,4 @@ Lib/lib_vision_models_pp/lib_vision_models_pp/Src/od_pp_yolov8.o: \
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h:
 ../../../Lib/lib_vision_models_pp/lib_vision_models_pp/Inc/od_yolov8_pp_if.h:
 ../../../Lib/lib_vision_models_pp/lib_vision_models_pp/Inc/od_pp_output_if.h:
-C:/Users/nogueirp/CES_Demo/Lib/lib_vision_models_pp/lib_vision_models_pp/Src/vision_models_pp.h:
+C:/Users/nogueirp/InternshipST/Lib/lib_vision_models_pp/lib_vision_models_pp/Src/vision_models_pp.h:

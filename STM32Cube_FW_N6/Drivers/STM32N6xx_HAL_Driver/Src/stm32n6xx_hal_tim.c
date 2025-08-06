@@ -3996,11 +3996,11 @@ void HAL_TIM_IRQHandler(TIM_HandleTypeDef *htim)
     if ((itsource & (TIM_IT_BREAK)) == (TIM_IT_BREAK))
     {
       __HAL_TIM_CLEAR_FLAG(htim, TIM_FLAG_BREAK2);
-#if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
-      htim->Break2Callback(htim);
-#else
-      HAL_TIMEx_Break2Callback(htim);
-#endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
+//#if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
+//      htim->Break2Callback(htim);
+//#else
+//      HAL_TIMEx_Break2Callback(htim);
+//#endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
     }
   }
   /* TIM Trigger detection event */
@@ -4022,11 +4022,11 @@ void HAL_TIM_IRQHandler(TIM_HandleTypeDef *htim)
     if ((itsource & (TIM_IT_COM)) == (TIM_IT_COM))
     {
       __HAL_TIM_CLEAR_FLAG(htim, TIM_FLAG_COM);
-#if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
-      htim->CommutationCallback(htim);
-#else
-      HAL_TIMEx_CommutCallback(htim);
-#endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
+//#if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
+//      htim->CommutationCallback(htim);
+//#else
+//      HAL_TIMEx_CommutCallback(htim);
+//#endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
     }
   }
   /* TIM Encoder index event */
@@ -4035,11 +4035,11 @@ void HAL_TIM_IRQHandler(TIM_HandleTypeDef *htim)
     if ((itsource & (TIM_IT_IDX)) == (TIM_IT_IDX))
     {
       __HAL_TIM_CLEAR_FLAG(htim, TIM_FLAG_IDX);
-#if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
-      htim->EncoderIndexCallback(htim);
-#else
-      HAL_TIMEx_EncoderIndexCallback(htim);
-#endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
+//#if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
+//      htim->EncoderIndexCallback(htim);
+//#else
+//      HAL_TIMEx_EncoderIndexCallback(htim);
+//#endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
     }
   }
   /* TIM Direction change event */
@@ -4048,11 +4048,11 @@ void HAL_TIM_IRQHandler(TIM_HandleTypeDef *htim)
     if ((itsource & (TIM_IT_DIR)) == (TIM_IT_DIR))
     {
       __HAL_TIM_CLEAR_FLAG(htim, TIM_FLAG_DIR);
-#if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
-      htim->DirectionChangeCallback(htim);
-#else
-      HAL_TIMEx_DirectionChangeCallback(htim);
-#endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
+//#if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
+//      htim->DirectionChangeCallback(htim);
+//#else
+//      HAL_TIMEx_DirectionChangeCallback(htim);
+//#endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
     }
   }
   /* TIM Index error event */
@@ -4061,11 +4061,11 @@ void HAL_TIM_IRQHandler(TIM_HandleTypeDef *htim)
     if ((itsource & (TIM_IT_IERR)) == (TIM_IT_IERR))
     {
       __HAL_TIM_CLEAR_FLAG(htim, TIM_FLAG_IERR);
-#if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
-      htim->IndexErrorCallback(htim);
-#else
-      HAL_TIMEx_IndexErrorCallback(htim);
-#endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
+//#if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
+//      htim->IndexErrorCallback(htim);
+//#else
+//      HAL_TIMEx_IndexErrorCallback(htim);
+//#endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
     }
   }
   /* TIM Transition error event */
@@ -4074,11 +4074,11 @@ void HAL_TIM_IRQHandler(TIM_HandleTypeDef *htim)
     if ((itsource & (TIM_IT_TERR)) == (TIM_IT_TERR))
     {
       __HAL_TIM_CLEAR_FLAG(htim, TIM_FLAG_TERR);
-#if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
-      htim->TransitionErrorCallback(htim);
-#else
-      HAL_TIMEx_TransitionErrorCallback(htim);
-#endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
+//#if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
+//      htim->TransitionErrorCallback(htim);
+//#else
+//      HAL_TIMEx_TransitionErrorCallback(htim);
+//#endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
     }
   }
 }

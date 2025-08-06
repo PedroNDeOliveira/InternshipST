@@ -22,6 +22,7 @@
 #include "stm32n6570_discovery.h"
 
 #include "cmw_camera.h"
+#include "tim2.h"
 
 /**
   * @brief   This function handles NMI exception.
@@ -102,4 +103,10 @@ void DCMIPP_IRQHandler(void)
 
 void EXTI0_IRQHandler(void){
 	BSP_PB_IRQHandler(BUTTON_TAMP);
+}
+
+void TIM2_IRQHandler(void)
+{
+  printf("TIM2 IRQ Handler. No callback yet. \n \r");
+  HAL_TIM_IRQHandler(&htim2);
 }

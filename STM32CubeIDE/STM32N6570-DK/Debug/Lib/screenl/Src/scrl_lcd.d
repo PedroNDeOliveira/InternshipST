@@ -1,5 +1,5 @@
 Lib/screenl/Src/scrl_lcd.o: \
- C:/Users/nogueirp/CES_Demo/Lib/screenl/Src/scrl_lcd.c \
+ C:/Users/nogueirp/InternshipST/Lib/screenl/Src/scrl_lcd.c \
  ../../../Lib/screenl/Inc/scrl.h \
  ../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_lcd.h \
  ../../../Inc/stm32n6570_discovery_conf.h \

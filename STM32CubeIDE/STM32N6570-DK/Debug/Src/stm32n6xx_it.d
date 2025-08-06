@@ -1,4 +1,4 @@
-Src/stm32n6xx_it.o: C:/Users/nogueirp/CES_Demo/Src/stm32n6xx_it.c \
+Src/stm32n6xx_it.o: C:/Users/nogueirp/InternshipST/Src/stm32n6xx_it.c \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h \
  ../../../Inc/stm32n6xx_hal_conf.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_rcc.h \
@@ -57,7 +57,8 @@ Src/stm32n6xx_it.o: C:/Users/nogueirp/CES_Demo/Src/stm32n6xx_it.c \
  ../../../Lib/Camera_Middleware/sensors/cmw_sensors_if.h \
  ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_core.h \
  ../../../Inc/isp_conf.h \
- ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_platform.h
+ ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_platform.h \
+ ../../../Inc/tim2.h
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h:
 ../../../Inc/stm32n6xx_hal_conf.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_rcc.h:
@@ -117,3 +118,4 @@ Src/stm32n6xx_it.o: C:/Users/nogueirp/CES_Demo/Src/stm32n6xx_it.c \
 ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_core.h:
 ../../../Inc/isp_conf.h:
 ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_platform.h:
+../../../Inc/tim2.h:

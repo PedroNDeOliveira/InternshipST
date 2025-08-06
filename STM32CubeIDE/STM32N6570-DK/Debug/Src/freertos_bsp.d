@@ -1,4 +1,4 @@
-Src/freertos_bsp.o: C:/Users/nogueirp/CES_Demo/Src/freertos_bsp.c \
+Src/freertos_bsp.o: C:/Users/nogueirp/InternshipST/Src/freertos_bsp.c \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/cmsis_compiler.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/cmsis_gcc.h \
  ../../../Lib/FreeRTOS/Source/include/FreeRTOS.h \

@@ -1,4 +1,4 @@
-Src/main.o: C:/Users/nogueirp/CES_Demo/Src/main.c ../../../Inc/app.h \
+Src/main.o: C:/Users/nogueirp/InternshipST/Src/main.c ../../../Inc/app.h \
  ../../../Inc/app_config.h ../../../Inc/postprocess_conf.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math_types.h \
@@ -78,6 +78,7 @@ Src/main.o: C:/Users/nogueirp/CES_Demo/Src/main.c ../../../Inc/app.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_xspi.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_cacheaxi.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_gpu2d.h \
+ ../../../Inc/tim2.h \
  ../../../Lib/AI_Runtime/Npu/Devices/STM32N6XX/npu_cache.h \
  ../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery.h \
  ../../../Inc/stm32n6570_discovery_conf.h \
@@ -183,6 +184,7 @@ Src/main.o: C:/Users/nogueirp/CES_Demo/Src/main.c ../../../Inc/app.h \
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_xspi.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_cacheaxi.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_gpu2d.h:
+../../../Inc/tim2.h:
 ../../../Lib/AI_Runtime/Npu/Devices/STM32N6XX/npu_cache.h:
 ../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery.h:
 ../../../Inc/stm32n6570_discovery_conf.h:

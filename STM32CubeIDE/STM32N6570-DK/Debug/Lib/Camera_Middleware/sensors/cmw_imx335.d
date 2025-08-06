@@ -1,7 +1,7 @@
 Lib/Camera_Middleware/sensors/cmw_imx335.o: \
- C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/sensors/cmw_imx335.c \
- C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/sensors/cmw_imx335.h \
- C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/sensors/cmw_sensors_if.h \
+ C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_imx335.c \
+ C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_imx335.h \
+ C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_sensors_if.h \
  ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_core.h \
  ../../../Inc/isp_conf.h \
  ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_platform.h \
@@ -99,8 +99,8 @@ Lib/Camera_Middleware/sensors/cmw_imx335.o: \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h \
  ../../../Inc/imx335_isp_param_conf.h \
  ../../../Inc/vd66gy_isp_param_conf.h
-C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/sensors/cmw_imx335.h:
-C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/sensors/cmw_sensors_if.h:
+C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_imx335.h:
+C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_sensors_if.h:
 ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_core.h:
 ../../../Inc/isp_conf.h:
 ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_platform.h:

@@ -8,7 +8,7 @@ $CP_BIN =  "STM32_Programmer_CLI.exe"
 # Files and addresses
 $OUTPUT_BIN = ".\STM32CubeIDE\STM32N6570-DK\Debug\x-cube-n6-ai-people-detection-tracking-dk.bin"
 $OUTPUT_SIGNED = ".\STM32CubeIDE\STM32N6570-DK\Debug\x-cube-n6-ai-people-detection-tracking-dk-signed.bin"
-$OUTPUT_DEST_ADDR = "0x70100000"
+$OUTPUT_DEST_ADDR = "0x72000000"
 
 Write-Host "`n-- Signing"
 Remove-Item -Force $OUTPUT_SIGNED -ErrorAction SilentlyContinue
@@ -24,3 +24,19 @@ Write-Host "`n-- Resetting the board"
 & $CP_BIN -q -c "port=SWD mode=powerdown freq=8000 ap=0"
 
 Write-Host "`n-- Done"
+
+ .noncacheable :
+  {
+    . = ALIGN(8);
+    __snoncacheable = .;/* create symbol for start of section */
+    KEEP(*(noncacheable_buffer))
+    . = ALIGN(8);
+    __enoncacheable = .;  /* create symbol for end of section */
+  } > RAM
+
+  .gnu.sgstubs :
+  {
+    . = ALIGN(4);
+    *(.gnu.sgstubs*)   /* Secure Gateway stubs */
+    . = ALIGN(4);
+  } >ROM 

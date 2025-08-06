@@ -1,5 +1,5 @@
 Gcc/Src/freertos_libc.o: \
- C:/Users/nogueirp/CES_Demo/Gcc/Src/freertos_libc.c \
+ C:/Users/nogueirp/InternshipST/Gcc/Src/freertos_libc.c \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/cmsis_compiler.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/cmsis_gcc.h \
  ../../../Lib/FreeRTOS/Source/include/FreeRTOS.h \

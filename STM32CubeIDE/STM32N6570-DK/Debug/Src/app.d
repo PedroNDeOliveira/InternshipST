@@ -1,4 +1,4 @@
-Src/app.o: C:/Users/nogueirp/CES_Demo/Src/app.c ../../../Inc/app.h \
+Src/app.o: C:/Users/nogueirp/InternshipST/Src/app.c ../../../Inc/app.h \
  ../../../Inc/app_cam.h ../../../Inc/app_config.h \
  ../../../Inc/postprocess_conf.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math.h \

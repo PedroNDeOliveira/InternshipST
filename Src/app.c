@@ -288,7 +288,7 @@ static const uint32_t colors[NUMBER_COLORS] = {
 
 /* Lcd Background Buffer */
 static uint8_t lcd_bg_buffer[DISPLAY_BUFFER_NB][LCD_BG_WIDTH * LCD_BG_HEIGHT * DISPLAY_BPP] ALIGN_32 IN_PSRAM;
-static uint8_t lcd_bg_buffer_const_black[LCD_BG_WIDTH * LCD_BG_HEIGHT * DISPLAY_BPP] ALIGN_32 IN_PSRAM;
+//static uint8_t lcd_bg_buffer_const_black[LCD_BG_WIDTH * LCD_BG_HEIGHT * DISPLAY_BPP] ALIGN_32 IN_PSRAM;
 //static uint8_t lcd_bg_buffer_resized[192 * 192 * DISPLAY_BPP] ALIGN_32 IN_PSRAM; // Testing resizing operation.
 
 static int lcd_bg_buffer_disp_idx = 1;
@@ -357,14 +357,15 @@ static trk_tbox_t tboxes[2 * AI_OD_PP_MAX_BOXES_LIMIT];
 static trk_dbox_t dboxes[AI_OD_PP_MAX_BOXES_LIMIT];
 static trk_ctx_t trk_ctx;
 // Palm detection
-static trk_tbox_t tboxes_pd[2 * AI_OD_PP_MAX_BOXES_LIMIT];
-static trk_dbox_t dboxes_pd[AI_OD_PP_MAX_BOXES_LIMIT];
+//static trk_tbox_t tboxes_pd[2 * AI_OD_PP_MAX_BOXES_LIMIT];
+//static trk_dbox_t dboxes_pd[AI_OD_PP_MAX_BOXES_LIMIT];
 static trk_ctx_t trk_ctx_pd;
 #endif
 
 
 //Start and stop program execution
-static int start_program = 0;
+static int start_program = 1;
+static int start_screen_printed = 0;
 
 #if HAS_ROTATION_SUPPORT == 1
 static GFXMMU_HandleTypeDef hgfxmmu;
@@ -653,13 +654,12 @@ static void reload_bg_layer(int next_disp_idx)
 {
   int ret;
 
-  if(start_program){
-	  ret = SCRL_SetAddress_NoReload(lcd_bg_buffer[next_disp_idx], SCRL_LAYER_0); // Changed it here.
+  if(!start_program){
+	  memset(lcd_bg_buffer[next_disp_idx], 0, sizeof(lcd_bg_buffer[next_disp_idx]));
   }
-  else{
-	  ret = SCRL_SetAddress_NoReload(lcd_bg_buffer_const_black, SCRL_LAYER_0);
-  }
+  ret = SCRL_SetAddress_NoReload(lcd_bg_buffer[next_disp_idx], SCRL_LAYER_0); // Changed it here.
   assert(ret == 0);
+
   ret = SCRL_ReloadLayer(SCRL_LAYER_0);
   assert(ret == 0);
 
@@ -1159,36 +1159,17 @@ static void Display_NetworkOutput_PalmDetector(display_info_t *info){
 }
 
 
-static void Display_Start_Screen(){
-	int line_nb = 10;
-
-	printf("Display start screen. \n \r");
-	/* clear previous ui */
-	UTIL_LCD_FillRect(lcd_fg_area.X0, lcd_fg_area.Y0, lcd_fg_area.XSize, lcd_fg_area.YSize, 0x00000000); /* Clear previous boxes */
-
-	/* draw metrics */
-	UTIL_LCDEx_PrintfAt(0, LINE(line_nb),  CENTER_MODE, "Welcome to the Edge AI Computer Vision Demo!");
-	line_nb += 2;
-	UTIL_LCDEx_PrintfAt(0, LINE(line_nb),  CENTER_MODE, "Press BUTTON TAMP to start execution.");
-}
-
 static void Display_NetworkOutput(display_info_t *info)
 {
-	if(start_program){
-		if(turn_people_detection){
-		  if (info->tracking_enabled)
-			Display_NetworkOutput_Tracking(info);
-		  else
-			Display_NetworkOutput_NoTracking(info);
-		}
-		else{
-			//printf("Running Palm Detector Display. \n \r");
-			Display_NetworkOutput_PalmDetector(info);
-		}
+	if(turn_people_detection){
+	  if (info->tracking_enabled)
+		Display_NetworkOutput_Tracking(info);
+	  else
+		Display_NetworkOutput_NoTracking(info);
 	}
 	else{
-		//clear_bg();
-		Display_Start_Screen();
+		//printf("Running Palm Detector Display. \n \r");
+		Display_NetworkOutput_PalmDetector(info);
 	}
 }
 
@@ -1231,7 +1212,6 @@ static void palm_detector_prepare_input(uint8_t *buffer, pd_model_info_t *info){
 //		for(int j = 0; j < 480; j++){
 //			for(int i = 0; i < 800; i++){
 //				idx = (z*800*480) + 800*j + i;
-//				printf("%d ", buffer[idx]);
 //			}
 //			printf("\n\r");
 //		}
@@ -1268,9 +1248,9 @@ static int app_tracking_pd(pd_postprocess_out_t *pp)
   int i;
 
   for (i = 0; i < pp->box_nb; i++)
-    roi_to_dbox_pd(&pp->pOutData[i], &dboxes_pd[i]);
+    roi_to_dbox_pd(&pp->pOutData[i], &dboxes[i]);
 
-  ret = trk_update(&trk_ctx_pd, pp->box_nb, dboxes_pd,0);
+  ret = trk_update(&trk_ctx_pd, pp->box_nb, dboxes,0);
   assert(ret == 0);
 
   return 1;
@@ -1710,14 +1690,10 @@ static void nn_thread_fct(void *arg)
   nn_pipe_dst = bqueue_get_free(&nn_input_queue, 0);
   assert(nn_pipe_dst);
   CAM_NNPipe_Start(nn_pipe_dst, CMW_MODE_CONTINUOUS); //nn_pipe_dst is the camera output buffer.
+
+  //vTaskSuspend(NULL); // We begin on start screen.
   while (1)
   {
-	button_process(&hd_toggle_button);
-	if(!start_program){
-		xSemaphoreGive(disp.update);
-		continue;
-	}
-
     uint8_t *capture_buffer;
     uint8_t *out[NN_OUT_NB];
     uint8_t *output_buffer;
@@ -1775,12 +1751,12 @@ static void nn_thread_fct(void *arg)
         disp.info.pd_hand_nb = hands;
         disp.info.pd_max_prob = pd_info.pd_out.pOutData[0].prob;
         disp.info.tboxes_valid_nb = 0;
-        for (i = 0; i < ARRAY_NB(tboxes_pd); i++) {
-          if (!tboxes_pd[i].is_tracking || tboxes_pd[i].tlost_cnt)
+        for (i = 0; i < ARRAY_NB(tboxes); i++) {
+          if (!tboxes[i].is_tracking || tboxes[i].tlost_cnt)
             continue;
           printf("Tracked box number = %d \n \r", i);
           disp.info.hands[disp.info.tboxes_valid_nb].is_valid = 1;
-          copy_trk_box_to_pd_box(&disp.info.hands[disp.info.tboxes_valid_nb].pd_hands, &tboxes_pd[i]);
+          copy_trk_box_to_pd_box(&disp.info.hands[disp.info.tboxes_valid_nb].pd_hands, &tboxes[i]);
           cvt_pd_coord_to_screen_coord(&disp.info.hands[disp.info.tboxes_valid_nb].pd_hands);
           disp.info.tboxes_valid_nb++;
             //pd_box_to_roi(&info->pd_out.pOutData[i], &rois[i]);
@@ -1827,7 +1803,7 @@ static int TRK_Init_pd()
     .tlost_cnt = 30,
   };
 
-  return trk_init(&trk_ctx_pd, (trk_conf_t *) &cfg, ARRAY_NB(tboxes), tboxes_pd);
+  return trk_init(&trk_ctx_pd, (trk_conf_t *) &cfg, ARRAY_NB(tboxes), tboxes);
 }
 
 static int update_and_capture_tracking_enabled()
@@ -1917,6 +1893,8 @@ static void pp_thread_fct(void *arg)
   (void)tracking_enabled;
   /* setup post process */
   app_postprocess_init(&pp_params);
+
+  //vTaskSuspend(NULL); // We begin on start screen.
   while (1)
   {
     uint8_t *output_buffer;
@@ -1982,6 +1960,21 @@ static void dp_commit_drawing_area()
   lcd_fg_buffer_rd_idx = 1 - lcd_fg_buffer_rd_idx;
 }
 
+static void Display_Start_Screen(){
+	dp_update_drawing_area();
+
+	int line_nb = 10;
+	/* clear previous ui */
+	UTIL_LCD_FillRect(lcd_fg_area.X0, lcd_fg_area.Y0, lcd_fg_area.XSize, lcd_fg_area.YSize, 0x00000000); /* Clear previous boxes */
+	/* draw metrics */
+	UTIL_LCDEx_PrintfAt(0, LINE(line_nb),  CENTER_MODE, "Welcome to the Edge AI Computer Vision Demo!");
+	line_nb += 2;
+	UTIL_LCDEx_PrintfAt(0, LINE(line_nb),  CENTER_MODE, "Press BUTTON TAMP to start execution.");
+
+	SCB_CleanDCache_by_Addr(lcd_fg_buffer[lcd_fg_buffer_rd_idx], LCD_FG_WIDTH * LCD_FG_HEIGHT* 2);
+	dp_commit_drawing_area();
+}
+
 static void dp_thread_fct(void *arg)
 {
 	uint32_t disp_ms = 0;
@@ -2003,21 +1996,27 @@ static void dp_thread_fct(void *arg)
 			ret = xSemaphoreGive(disp.lock);
 			assert(ret == pdTRUE);
 			info.disp_ms = disp_ms;
-		}
 
-		ts = HAL_GetTick();
-		dp_update_drawing_area();
-		Display_NetworkOutput(&info); // This is what I have to change.
-		SCB_CleanDCache_by_Addr(lcd_fg_buffer[lcd_fg_buffer_rd_idx], LCD_FG_WIDTH * LCD_FG_HEIGHT* 2);
-		dp_commit_drawing_area();
-		disp_ms = HAL_GetTick() - ts;
+			ts = HAL_GetTick();
+			dp_update_drawing_area();
+			Display_NetworkOutput(&info); // This is what I have to change.
+			SCB_CleanDCache_by_Addr(lcd_fg_buffer[lcd_fg_buffer_rd_idx], LCD_FG_WIDTH * LCD_FG_HEIGHT* 2);
+			dp_commit_drawing_area();
+			disp_ms = HAL_GetTick() - ts;
+		}
+		else{
+			if(!start_screen_printed){
+				Display_Start_Screen();
+				start_screen_printed = 1;
+			}
+		}
 	}
 }
 
 static void isp_thread_fct(void *arg)
 {
   int ret;
-
+  //vTaskSuspend(NULL); // We begin on start screen.
   while (1) {
     ret = xSemaphoreTake(isp_sem, portMAX_DELAY);
     assert(ret == pdTRUE);
@@ -2062,7 +2061,7 @@ static void Display_init()
   UTIL_LCD_SetTextColor(UTIL_LCD_COLOR_WHITE);
 
   // Setting black screen.
-  memset(lcd_bg_buffer_const_black, 0, sizeof(lcd_bg_buffer_const_black));
+  //memset(lcd_bg_buffer_const_black, 0, sizeof(lcd_bg_buffer_const_black));
 }
 
 //static void Display_init()
@@ -2168,14 +2167,6 @@ void app_run()
   isp = xTaskCreateStatic(isp_thread_fct, "isp", configMINIMAL_STACK_SIZE * 2, NULL, isp_priority, isp_thread_stack,
                           &isp_thread);
   assert(isp != NULL);
-
-//  vTaskSuspend(nn);
-//  vTaskSuspend(pp);
-//  vTaskSuspend(isp);
-//
-//  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-//  xSemaphoreGiveFromISR(disp.update,&xHigherPriorityTaskWoken);
-//  xSemaphoreGiveFromISR(disp.lock,&xHigherPriorityTaskWoken);
 }
 
 //static void load_Bg_Black_Screen(){
@@ -2214,10 +2205,14 @@ int CMW_CAMERA_PIPE_VsyncEventCallback(uint32_t pipe)
 
 void BSP_PB_Callback(Button_TypeDef Button){
 	if(Button == BUTTON_TAMP){
-		printf("Button TAMP pressed. \n \r");
+		printf("Button TAMP pressed - ");
 		if(start_program){
+			printf("Stop program. \n \r");
+			int ret = TRK_Init();
+			assert(ret == 0);
 			BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 			start_program = 0;
+			start_screen_printed = 0;
 			vTaskSuspend(nn);
 			vTaskSuspend(pp);
 			vTaskSuspend(isp);
@@ -2225,12 +2220,18 @@ void BSP_PB_Callback(Button_TypeDef Button){
 			xSemaphoreGiveFromISR(disp.lock,&xHigherPriorityTaskWoken);
 		}
 		else{
+			printf("Start program. \n \r");
 			start_program = 1;
-			vTaskResume(nn);
-			vTaskResume(pp);
-			vTaskResume(isp);
+			xTaskResumeFromISR(nn);
+			xTaskResumeFromISR(pp);
+			xTaskResumeFromISR(isp);
 		}
 	}
 }
 
+// Timer Period Elapsed Event
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  printf("Period elapsed. \n \r");
+}
 

@@ -1,5 +1,5 @@
 Lib/FreeRTOS/Source/croutine.o: \
- C:/Users/nogueirp/CES_Demo/Lib/FreeRTOS/Source/croutine.c \
+ C:/Users/nogueirp/InternshipST/Lib/FreeRTOS/Source/croutine.c \
  ../../../Lib/FreeRTOS/Source/include/FreeRTOS.h \
  ../../../Inc/FreeRTOSConfig.h \
  ../../../Lib/FreeRTOS/Source/include/projdefs.h \

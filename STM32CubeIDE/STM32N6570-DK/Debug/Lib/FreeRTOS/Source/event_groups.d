@@ -1,5 +1,5 @@
 Lib/FreeRTOS/Source/event_groups.o: \
- C:/Users/nogueirp/CES_Demo/Lib/FreeRTOS/Source/event_groups.c \
+ C:/Users/nogueirp/InternshipST/Lib/FreeRTOS/Source/event_groups.c \
  ../../../Lib/FreeRTOS/Source/include/FreeRTOS.h \
  ../../../Inc/FreeRTOSConfig.h \
  ../../../Lib/FreeRTOS/Source/include/projdefs.h \

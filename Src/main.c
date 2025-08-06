@@ -22,6 +22,7 @@
 #include "app_config.h"
 #include "app_fuseprogramming.h"
 #include "main.h"
+#include "tim2.h"
 #include "npu_cache.h"
 #ifdef STM32N6570_DK_REV
 #include "stm32n6570_discovery.h"
@@ -39,6 +40,7 @@
 #include "task.h"
 
 UART_HandleTypeDef huart1;
+TIM_HandleTypeDef htim2;
 
 static StaticTask_t main_thread;
 static StackType_t main_thread_stack[configMINIMAL_STACK_SIZE];
@@ -47,6 +49,7 @@ static void SystemClock_Config(void);
 static void NPURam_enable();
 static void NPUCache_config();
 static void Security_Config();
+static void TIM2_Config();
 static void IAC_Config();
 static void CONSOLE_Config(void);
 static int main_freertos(void);
@@ -70,6 +73,10 @@ int main(void)
   __HAL_RCC_SYSCLK_CONFIG(RCC_SYSCLKSOURCE_HSI);
 
   HAL_Init();
+
+
+//  MX_GPIO_Init();
+//  HAL_GPIO_WritePin(GPIOO, GPIO_PIN_1, GPIO_PIN_SET);
 
   SCB_EnableICache();
 
@@ -297,6 +304,53 @@ static void CONSOLE_Config()
   }
 }
 
+
+static void TIM2_Config(){
+
+	/* USER CODE BEGIN TIM2_Init 0 */
+
+	/* USER CODE END TIM2_Init 0 */
+
+	TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+	TIM_SlaveConfigTypeDef sSlaveConfig = {0};
+	TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+	/* USER CODE BEGIN TIM2_Init 1 */
+
+	/* USER CODE END TIM2_Init 1 */
+	htim2.Instance = TIM2;
+	htim2.Init.Prescaler = 40000;
+	htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+	htim2.Init.Period = 10000;
+	htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+	htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+	if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+	{
+		while (1);
+	}
+	sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+	if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+	{
+		while (1);
+	}
+	sSlaveConfig.SlaveMode = TIM_SLAVEMODE_DISABLE;
+	sSlaveConfig.InputTrigger = TIM_TS_ITR2;
+	if (HAL_TIM_SlaveConfigSynchro(&htim2, &sSlaveConfig) != HAL_OK)
+	{
+		while (1);
+	}
+	sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+	sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+	if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+	{
+		while (1);
+	}
+	/* USER CODE BEGIN TIM2_Init 2 */
+
+	/* USER CODE END TIM2_Init 2 */
+
+}
+
 static int main_freertos()
 {
   TaskHandle_t hdl;
@@ -337,6 +391,8 @@ static void main_thread_fct(void *arg)
 
   NPUCache_config();
 
+  TIM2_Config();
+
 #ifdef STM32N6570_DK_REV
   /*** External RAM and NOR Flash *********************************************/
   BSP_XSPI_RAM_Init(0);
@@ -371,6 +427,8 @@ static void main_thread_fct(void *arg)
   LL_APB4_GRP2_EnableClockLowPower(~0);
   LL_APB5_GRP1_EnableClockLowPower(~0);
   LL_MISC_EnableClockLowPower(~0);
+
+  printf("Initial configuration done. \n \r");
 
   app_run();
 

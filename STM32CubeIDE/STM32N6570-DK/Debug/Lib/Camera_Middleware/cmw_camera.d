@@ -1,7 +1,7 @@
 Lib/Camera_Middleware/cmw_camera.o: \
- C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/cmw_camera.c \
- C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/cmw_camera.h \
- C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/cmw_errno.h \
+ C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/cmw_camera.c \
+ C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/cmw_camera.h \
+ C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/cmw_errno.h \
  ../../../Inc/cmw_camera_conf.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h \
  ../../../Inc/stm32n6xx_hal_conf.h \
@@ -59,8 +59,8 @@ Lib/Camera_Middleware/cmw_camera.o: \
  ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_platform.h \
  ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_api.h \
  ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_core.h \
- C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/cmw_utils.h \
- C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/cmw_io.h \
+ C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/cmw_utils.h \
+ C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/cmw_io.h \
  ../../../Lib/Camera_Middleware/sensors/cmw_vd55g1.h \
  ../../../Lib/Camera_Middleware/sensors/cmw_sensors_if.h \
  ../../../Lib/Camera_Middleware/cmw_errno.h \
@@ -71,8 +71,8 @@ Lib/Camera_Middleware/cmw_camera.o: \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/cmsis_compiler.h \
  ../../../Lib/Camera_Middleware/sensors/cmw_vd66gy.h \
  ../../../Lib/Camera_Middleware/sensors/vd6g/vd6g.h
-C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/cmw_camera.h:
-C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/cmw_errno.h:
+C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/cmw_camera.h:
+C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/cmw_errno.h:
 ../../../Inc/cmw_camera_conf.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h:
 ../../../Inc/stm32n6xx_hal_conf.h:
@@ -130,8 +130,8 @@ C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/cmw_errno.h:
 ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_platform.h:
 ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_api.h:
 ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_core.h:
-C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/cmw_utils.h:
-C:/Users/nogueirp/CES_Demo/Lib/Camera_Middleware/cmw_io.h:
+C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/cmw_utils.h:
+C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/cmw_io.h:
 ../../../Lib/Camera_Middleware/sensors/cmw_vd55g1.h:
 ../../../Lib/Camera_Middleware/sensors/cmw_sensors_if.h:
 ../../../Lib/Camera_Middleware/cmw_errno.h:
