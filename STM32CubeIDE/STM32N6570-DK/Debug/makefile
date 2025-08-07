@@ -85,8 +85,8 @@ all: main-build
 main-build: x-cube-n6-ai-people-detection-tracking-dk.elf secondary-outputs
 
 # Tool invocations
-x-cube-n6-ai-people-detection-tracking-dk.elf x-cube-n6-ai-people-detection-tracking-dk.map: $(OBJS) $(USER_OBJS) ../../../Gcc/STM32N657xx.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "x-cube-n6-ai-people-detection-tracking-dk.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m55 -T"../../../Gcc/STM32N657xx.ld" --specs=nosys.specs -Wl,-Map="x-cube-n6-ai-people-detection-tracking-dk.map" -Wl,--gc-sections -static -Wl,--cmse-implib -Wl,--out-implib=./secure_nsclib.o -L../../../Lib/AI_Runtime/Lib/GCC/ARMCortexM55 -L../../../Lib/Camera_Middleware/ISP_Library/evision/Lib -u _printf_float -Wl,--no-warn-rwx-segments --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+x-cube-n6-ai-people-detection-tracking-dk.elf x-cube-n6-ai-people-detection-tracking-dk.map: $(OBJS) $(USER_OBJS) ../../../Gcc/STM32N657xx-FlashCodeExecution.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "x-cube-n6-ai-people-detection-tracking-dk.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m55 -T"../../../Gcc/STM32N657xx-FlashCodeExecution.ld" --specs=nosys.specs -Wl,-Map="x-cube-n6-ai-people-detection-tracking-dk.map" -Wl,--gc-sections -static -Wl,--cmse-implib -Wl,--out-implib=./secure_nsclib.o -L../../../Lib/AI_Runtime/Lib/GCC/ARMCortexM55 -L../../../Lib/Camera_Middleware/ISP_Library/evision/Lib -u _printf_float -Wl,--no-warn-rwx-segments --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

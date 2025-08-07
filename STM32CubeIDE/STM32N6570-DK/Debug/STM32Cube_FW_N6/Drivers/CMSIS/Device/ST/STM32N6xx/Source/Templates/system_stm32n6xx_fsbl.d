@@ -9,7 +9,9 @@ STM32Cube_FW_N6/Drivers/CMSIS/Device/ST/STM32N6xx/Source/Templates/system_stm32n
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/mpu_armv8.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/pmu_armv8.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/cachel1_armv7.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/Device/ST/STM32N6xx/Include/system_stm32n6xx.h
+ ../../../STM32Cube_FW_N6/Drivers/CMSIS/Device/ST/STM32N6xx/Include/system_stm32n6xx.h \
+ ../../../STM32Cube_FW_N6/Drivers/CMSIS/Device/ST/STM32N6xx/Include/partition_stm32n6xx.h \
+ ../../../Inc/partition_stm32n657xx.h
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/Device/ST/STM32N6xx/Include/stm32n6xx.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/Device/ST/STM32N6xx/Include/stm32n657xx.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/core_cm55.h:
@@ -20,3 +22,5 @@ STM32Cube_FW_N6/Drivers/CMSIS/Device/ST/STM32N6xx/Source/Templates/system_stm32n
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/pmu_armv8.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/cachel1_armv7.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/Device/ST/STM32N6xx/Include/system_stm32n6xx.h:
+../../../STM32Cube_FW_N6/Drivers/CMSIS/Device/ST/STM32N6xx/Include/partition_stm32n6xx.h:
+../../../Inc/partition_stm32n657xx.h:

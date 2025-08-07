@@ -84,6 +84,12 @@ void DebugMon_Handler(void)
   }
 }
 
+void HardFault_Handler(void){
+	while(1){
+
+	}
+}
+
 /******************************************************************************/
 /*                 STM32N6xx Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */

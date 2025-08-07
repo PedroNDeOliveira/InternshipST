@@ -50,6 +50,7 @@ static void NPURam_enable();
 static void NPUCache_config();
 static void Security_Config();
 static void TIM2_Config();
+static void MX_GPIO_Init();
 static void IAC_Config();
 static void CONSOLE_Config(void);
 static int main_freertos(void);
@@ -68,15 +69,11 @@ int main(void)
   /* Power on ICACHE */
   MEMSYSCTL->MSCR |= MEMSYSCTL_MSCR_ICACTIVE_Msk;
 
-  /* Set back system and CPU clock source to HSI */
-  __HAL_RCC_CPUCLK_CONFIG(RCC_CPUCLKSOURCE_HSI);
-  __HAL_RCC_SYSCLK_CONFIG(RCC_SYSCLKSOURCE_HSI);
+//  /* Set back system and CPU clock source to HSI */
+//  __HAL_RCC_CPUCLK_CONFIG(RCC_CPUCLKSOURCE_HSI);
+//  __HAL_RCC_SYSCLK_CONFIG(RCC_SYSCLKSOURCE_HSI);
 
   HAL_Init();
-
-
-//  MX_GPIO_Init();
-//  HAL_GPIO_WritePin(GPIOO, GPIO_PIN_1, GPIO_PIN_SET);
 
   SCB_EnableICache();
 
@@ -85,6 +82,17 @@ int main(void)
   MEMSYSCTL->MSCR |= MEMSYSCTL_MSCR_DCACTIVE_Msk;
   SCB_EnableDCache();
 #endif
+
+  __HAL_RCC_PWR_CLK_ENABLE();
+  HAL_PWREx_EnableVddIO2();
+
+  MX_GPIO_Init();
+
+  //HAL_GPIO_WritePin(GPIOO, GPIO_PIN_1, GPIO_PIN_SET);
+
+//  while(1){
+//
+//  }
 
   return main_freertos();
 }
@@ -265,9 +273,9 @@ static void SystemClock_Config(void)
   RCC_PeriphCLKInitStruct.PeriphClockSelection |= RCC_PERIPHCLK_XSPI1;
   RCC_PeriphCLKInitStruct.Xspi1ClockSelection = RCC_XSPI1CLKSOURCE_HCLK;
 
-  /* XSPI2 kernel clock (ck_ker_xspi1) = HCLK =  200MHz */
-  RCC_PeriphCLKInitStruct.PeriphClockSelection |= RCC_PERIPHCLK_XSPI2;
-  RCC_PeriphCLKInitStruct.Xspi2ClockSelection = RCC_XSPI2CLKSOURCE_HCLK;
+//  /* XSPI2 kernel clock (ck_ker_xspi1) = HCLK =  200MHz */
+//  RCC_PeriphCLKInitStruct.PeriphClockSelection |= RCC_PERIPHCLK_XSPI2;
+//  RCC_PeriphCLKInitStruct.Xspi2ClockSelection = RCC_XSPI2CLKSOURCE_HCLK;
 
   if (HAL_RCCEx_PeriphCLKConfig(&RCC_PeriphCLKInitStruct) != HAL_OK)
   {
@@ -302,6 +310,42 @@ static void CONSOLE_Config()
   {
     while (1);
   }
+}
+
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+  /* USER CODE END MX_GPIO_Init_1 */
+
+  /* GPIO Ports Clock Enable */
+//  __HAL_RCC_GPIOH_CLK_ENABLE();
+//  __HAL_RCC_GPIOC_CLK_ENABLE();
+//  __HAL_RCC_GPIOE_CLK_ENABLE();
+//  __HAL_RCC_GPIOD_CLK_ENABLE();
+//  __HAL_RCC_GPIOB_CLK_ENABLE();
+//  __HAL_RCC_GPIOP_CLK_ENABLE();
+  __HAL_RCC_GPIOO_CLK_ENABLE();
+
+//  __HAL_RCC_GPIOG_CLK_ENABLE();
+//  __HAL_RCC_GPIOF_CLK_ENABLE();
+//  __HAL_RCC_GPION_CLK_ENABLE();
+//  __HAL_RCC_GPIOA_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOO, GPIO_PIN_1, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : PO1 */
+  GPIO_InitStruct.Pin = GPIO_PIN_1;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOO, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* USER CODE END MX_GPIO_Init_2 */
 }
 
 
@@ -381,13 +425,17 @@ static void main_thread_fct(void *arg)
   /* Call SystemClock_Config() after vTaskStartScheduler() since it call HAL_Delay() which call vTaskDelay(). Drawback
    * is that we must call vPortSetupTimerInterrupt() since SystemCoreClock value has been modified by SystemClock_Config()
    */
-  SystemClock_Config();
-  vPortSetupTimerInterrupt();
+  HAL_GPIO_WritePin(GPIOO, GPIO_PIN_1, GPIO_PIN_SET);
+  //SystemClock_Config();
+  //SystemCoreClockUpdate();
+  //vPortSetupTimerInterrupt();
 
   CONSOLE_Config();
 
+  printf("Initial configuration done. \n \r");
+
   NPURam_enable();
-  Fuse_Programming();
+  //Fuse_Programming();
 
   NPUCache_config();
 
@@ -399,11 +447,11 @@ static void main_thread_fct(void *arg)
   BSP_XSPI_RAM_EnableMemoryMappedMode(0);
 #endif
 
-  BSP_XSPI_NOR_Init_t NOR_Init;
-  NOR_Init.InterfaceMode = BSP_XSPI_NOR_OPI_MODE;
-  NOR_Init.TransferRate = BSP_XSPI_NOR_DTR_TRANSFER;
-  BSP_XSPI_NOR_Init(0, &NOR_Init);
-  BSP_XSPI_NOR_EnableMemoryMappedMode(0);
+//  BSP_XSPI_NOR_Init_t NOR_Init;
+//  NOR_Init.InterfaceMode = BSP_XSPI_NOR_OPI_MODE;
+//  NOR_Init.TransferRate = BSP_XSPI_NOR_DTR_TRANSFER;
+//  BSP_XSPI_NOR_Init(0, &NOR_Init);
+//  BSP_XSPI_NOR_EnableMemoryMappedMode(0);
 
   /* Set all required IPs as secure privileged */
   Security_Config();
@@ -427,8 +475,6 @@ static void main_thread_fct(void *arg)
   LL_APB4_GRP2_EnableClockLowPower(~0);
   LL_APB5_GRP1_EnableClockLowPower(~0);
   LL_MISC_EnableClockLowPower(~0);
-
-  printf("Initial configuration done. \n \r");
 
   app_run();
 
