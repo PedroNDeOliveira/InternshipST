@@ -82,6 +82,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Src/stm32_lcd_ex.c</locationURI>
 		</link>
 		<link>
+			<name>Src/stm32n6xx_hal_msp.c</name>
+			<type>1</type>
+			<location>C:/Users/nogueirp/InternshipST/Src/stm32n6xx_hal_msp.c</location>
+		</link>
+		<link>
 			<name>Src/stm32n6xx_it.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/stm32n6xx_it.c</locationURI>
@@ -592,4 +597,10 @@
 			<locationURI>PARENT-2-PROJECT_LOC/STM32Cube_FW_N6/Drivers/CMSIS/Device/ST/STM32N6xx/Source/Templates/gcc/startup_stm32n657xx.s</locationURI>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>copy_PARENT</name>
+			<value>$%7BPARENT-3-PROJECT_LOC%7D/OneDrive%20-%20STMicroelectronics/TimerGenerator-N6DK</value>
+		</variable>
+	</variableList>
 </projectDescription>

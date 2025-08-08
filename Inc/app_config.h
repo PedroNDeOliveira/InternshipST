@@ -21,6 +21,7 @@
 #define USE_DCACHE
 
 #include "postprocess_conf.h"
+#include "timing_conf.h"
 
 /* Define sensor orientation */
 #define CAMERA_FLIP CMW_MIRRORFLIP_MIRROR

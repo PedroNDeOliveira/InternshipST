@@ -32,6 +32,7 @@ Src/app.o: C:/Users/nogueirp/InternshipST/Src/app.c ../../../Inc/app.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/filtering_functions.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h \
+ ../../../Inc/timing_conf.h \
  ../../../Lib/ai-postprocessing-wrapper/app_postprocess.h \
  ../../../Lib/lib_vision_models_pp/lib_vision_models_pp/Inc/od_yolov2_pp_if.h \
  ../../../Lib/lib_vision_models_pp/lib_vision_models_pp/Inc/od_pp_output_if.h \
@@ -144,7 +145,7 @@ Src/app.o: C:/Users/nogueirp/InternshipST/Src/app.c ../../../Inc/app.h \
  ../../../STM32Cube_FW_N6/Utilities/lcd/stm32_lcd.h \
  ../../../STM32Cube_FW_N6/Utilities/lcd/../Fonts/fonts.h \
  ../../../STM32Cube_FW_N6/Drivers/BSP/Components/Common/lcd.h \
- ../../../Inc/stm32_lcd_ex.h \
+ ../../../Inc/stm32_lcd_ex.h ../../../Inc/tim2.h \
  ../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery.h \
  ../../../Lib/tracker/tracker.h ../../../Lib/tracker/kf.h \
  ../../../Lib/tracker/ulist.h ../../../Inc/utils.h
@@ -183,6 +184,7 @@ Src/app.o: C:/Users/nogueirp/InternshipST/Src/app.c ../../../Inc/app.h \
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/filtering_functions.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h:
+../../../Inc/timing_conf.h:
 ../../../Lib/ai-postprocessing-wrapper/app_postprocess.h:
 ../../../Lib/lib_vision_models_pp/lib_vision_models_pp/Inc/od_yolov2_pp_if.h:
 ../../../Lib/lib_vision_models_pp/lib_vision_models_pp/Inc/od_pp_output_if.h:
@@ -297,6 +299,7 @@ Src/app.o: C:/Users/nogueirp/InternshipST/Src/app.c ../../../Inc/app.h \
 ../../../STM32Cube_FW_N6/Utilities/lcd/../Fonts/fonts.h:
 ../../../STM32Cube_FW_N6/Drivers/BSP/Components/Common/lcd.h:
 ../../../Inc/stm32_lcd_ex.h:
+../../../Inc/tim2.h:
 ../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery.h:
 ../../../Lib/tracker/tracker.h:
 ../../../Lib/tracker/kf.h:

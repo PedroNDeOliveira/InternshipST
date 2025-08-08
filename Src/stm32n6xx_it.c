@@ -113,6 +113,6 @@ void EXTI0_IRQHandler(void){
 
 void TIM2_IRQHandler(void)
 {
-  printf("TIM2 IRQ Handler. No callback yet. \n \r");
+  //printf("TIM2 IRQ Handler. No callback yet. \n \r");
   HAL_TIM_IRQHandler(&htim2);
 }

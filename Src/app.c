@@ -35,6 +35,7 @@
 #include "stm32_lcd.h"
 #include "stm32_lcd_ex.h"
 #include "stm32n6xx_hal.h"
+#include "tim2.h"
 #ifdef STM32N6570_DK_REV
 #include "stm32n6570_discovery.h"
 #else
@@ -366,6 +367,7 @@ static trk_ctx_t trk_ctx_pd;
 //Start and stop program execution
 static int start_program = 1;
 static int start_screen_printed = 0;
+static int sec_counter = 0;
 
 #if HAS_ROTATION_SUPPORT == 1
 static GFXMMU_HandleTypeDef hgfxmmu;
@@ -2140,6 +2142,8 @@ void app_run()
 
   cpuload_init(&cpu_load);
 
+  //HAL_TIM_Base_Start_IT(&htim2);
+
   /*** Camera Init ************************************************************/  
   CAM_Init();
 
@@ -2225,6 +2229,7 @@ void BSP_PB_Callback(Button_TypeDef Button){
 			xTaskResumeFromISR(nn);
 			xTaskResumeFromISR(pp);
 			xTaskResumeFromISR(isp);
+			HAL_TIM_Base_Start_IT(&htim2);
 		}
 	}
 }
@@ -2232,6 +2237,12 @@ void BSP_PB_Callback(Button_TypeDef Button){
 // Timer Period Elapsed Event
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  printf("Period elapsed. \n \r");
+	printf("Time = %d \n \r", sec_counter);
+	if(++sec_counter == PEOPLE_D_RUNNING_TIME){
+		int ret = TRK_Init();
+		assert(ret == 0);
+		turn_people_detection = 0;
+		HAL_TIM_Base_Stop_IT(&htim2);
+	}
 }
 

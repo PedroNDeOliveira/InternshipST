@@ -109,4 +109,5 @@
 "./Src/main.o"
 "./Src/nema_hal_freertos.o"
 "./Src/stm32_lcd_ex.o"
+"./Src/stm32n6xx_hal_msp.o"
 "./Src/stm32n6xx_it.o"

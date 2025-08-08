@@ -1,10 +1,6 @@
-Lib/Camera_Middleware/sensors/cmw_imx335.o: \
- C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_imx335.c \
- C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_imx335.h \
- C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_sensors_if.h \
- ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_core.h \
- ../../../Inc/isp_conf.h \
- ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_platform.h \
+Src/stm32n6xx_hal_msp.o: \
+ C:/Users/nogueirp/InternshipST/Src/stm32n6xx_hal_msp.c \
+ ../../../Inc/main.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h \
  ../../../Inc/stm32n6xx_hal_conf.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_rcc.h \
@@ -51,59 +47,8 @@ Lib/Camera_Middleware/sensors/cmw_imx335.o: \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_uart_ex.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_xspi.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_cacheaxi.h \
- ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_gpu2d.h \
- ../../../Lib/Camera_Middleware/cmw_errno.h \
- ../../../Lib/Camera_Middleware/sensors/imx335/imx335.h \
- ../../../Lib/Camera_Middleware/sensors/imx335/imx335_reg.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/cmsis_compiler.h \
- ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_api.h \
- ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_core.h \
- ../../../Lib/Camera_Middleware/cmw_camera.h \
- ../../../Lib/Camera_Middleware/cmw_errno.h \
- ../../../Inc/cmw_camera_conf.h \
- ../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.h \
- ../../../Inc/stm32n6570_discovery_conf.h \
- ../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_errno.h \
- ../../../Lib/Camera_Middleware/sensors/cmw_sensors_if.h \
- ../../../Lib/Camera_Middleware/sensors/imx335/imx335_reg.h \
- ../../../Inc/isp_param_conf.h ../../../Inc/app_config.h \
- ../../../Inc/postprocess_conf.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math_types.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math_memory.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/none.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math_types.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/utils.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/basic_math_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math_memory.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/none.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/utils.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/interpolation_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/bayes_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/statistics_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/basic_math_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/fast_math_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/matrix_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/complex_math_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/statistics_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/controller_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/distance_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/svm_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/svm_defines.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/fast_math_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/transform_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/complex_math_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/filtering_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h \
- ../../../Inc/timing_conf.h ../../../Inc/imx335_isp_param_conf.h \
- ../../../Inc/vd66gy_isp_param_conf.h
-C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_imx335.h:
-C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_sensors_if.h:
-../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_core.h:
-../../../Inc/isp_conf.h:
-../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_platform.h:
+ ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_gpu2d.h
+../../../Inc/main.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h:
 ../../../Inc/stm32n6xx_hal_conf.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_rcc.h:
@@ -151,52 +96,3 @@ C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_sensors_if.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_xspi.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_cacheaxi.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_gpu2d.h:
-../../../Lib/Camera_Middleware/cmw_errno.h:
-../../../Lib/Camera_Middleware/sensors/imx335/imx335.h:
-../../../Lib/Camera_Middleware/sensors/imx335/imx335_reg.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/cmsis_compiler.h:
-../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_api.h:
-../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_core.h:
-../../../Lib/Camera_Middleware/cmw_camera.h:
-../../../Lib/Camera_Middleware/cmw_errno.h:
-../../../Inc/cmw_camera_conf.h:
-../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.h:
-../../../Inc/stm32n6570_discovery_conf.h:
-../../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_errno.h:
-../../../Lib/Camera_Middleware/sensors/cmw_sensors_if.h:
-../../../Lib/Camera_Middleware/sensors/imx335/imx335_reg.h:
-../../../Inc/isp_param_conf.h:
-../../../Inc/app_config.h:
-../../../Inc/postprocess_conf.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math_types.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math_memory.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/none.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math_types.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/utils.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/basic_math_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math_memory.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/none.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/utils.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/interpolation_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/bayes_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/statistics_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/basic_math_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/fast_math_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/matrix_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/complex_math_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/statistics_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/controller_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/distance_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/svm_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/svm_defines.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/fast_math_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/transform_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/complex_math_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/filtering_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h:
-../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h:
-../../../Inc/timing_conf.h:
-../../../Inc/imx335_isp_param_conf.h:
-../../../Inc/vd66gy_isp_param_conf.h:

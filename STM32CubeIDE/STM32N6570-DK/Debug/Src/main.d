@@ -31,7 +31,8 @@ Src/main.o: C:/Users/nogueirp/InternshipST/Src/main.c ../../../Inc/app.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/filtering_functions.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h \
- ../../../Inc/app_fuseprogramming.h ../../../Inc/main.h \
+ ../../../Inc/timing_conf.h ../../../Inc/app_fuseprogramming.h \
+ ../../../Inc/main.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h \
  ../../../Inc/stm32n6xx_hal_conf.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_rcc.h \
@@ -136,6 +137,7 @@ Src/main.o: C:/Users/nogueirp/InternshipST/Src/main.c ../../../Inc/app.h \
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/filtering_functions.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h:
+../../../Inc/timing_conf.h:
 ../../../Inc/app_fuseprogramming.h:
 ../../../Inc/main.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h:

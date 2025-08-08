@@ -425,7 +425,7 @@ static void main_thread_fct(void *arg)
   /* Call SystemClock_Config() after vTaskStartScheduler() since it call HAL_Delay() which call vTaskDelay(). Drawback
    * is that we must call vPortSetupTimerInterrupt() since SystemCoreClock value has been modified by SystemClock_Config()
    */
-  HAL_GPIO_WritePin(GPIOO, GPIO_PIN_1, GPIO_PIN_SET);
+  //HAL_GPIO_WritePin(GPIOO, GPIO_PIN_1, GPIO_PIN_SET);
   //SystemClock_Config();
   //SystemCoreClockUpdate();
   //vPortSetupTimerInterrupt();

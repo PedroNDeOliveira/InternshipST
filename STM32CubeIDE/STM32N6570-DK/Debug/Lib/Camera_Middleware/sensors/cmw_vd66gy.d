@@ -95,7 +95,7 @@ Lib/Camera_Middleware/sensors/cmw_vd66gy.o: \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/filtering_functions.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h \
- ../../../Inc/imx335_isp_param_conf.h \
+ ../../../Inc/timing_conf.h ../../../Inc/imx335_isp_param_conf.h \
  ../../../Inc/vd66gy_isp_param_conf.h
 C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_vd66gy.h:
 C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_sensors_if.h:
@@ -193,5 +193,6 @@ C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/sensors/cmw_sensors_if.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/filtering_functions.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h:
+../../../Inc/timing_conf.h:
 ../../../Inc/imx335_isp_param_conf.h:
 ../../../Inc/vd66gy_isp_param_conf.h:

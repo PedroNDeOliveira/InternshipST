@@ -34,7 +34,8 @@ Lib/tracker/tracker.o: \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/complex_math_functions.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/filtering_functions.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h \
- ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h
+ ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h \
+ ../../../Inc/timing_conf.h
 C:/Users/nogueirp/InternshipST/Lib/tracker/tracker.h:
 C:/Users/nogueirp/InternshipST/Lib/tracker/kf.h:
 C:/Users/nogueirp/InternshipST/Lib/tracker/ulist.h:
@@ -71,3 +72,4 @@ C:/Users/nogueirp/InternshipST/Lib/tracker/ulist.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/filtering_functions.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h:
+../../../Inc/timing_conf.h:

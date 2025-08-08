@@ -88,7 +88,7 @@ Src/app_cam.o: C:/Users/nogueirp/InternshipST/Src/app_cam.c \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/filtering_functions.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h \
- ../../../Inc/utils.h
+ ../../../Inc/timing_conf.h ../../../Inc/utils.h
 ../../../Inc/app.h:
 ../../../Lib/Camera_Middleware/cmw_camera.h:
 ../../../Lib/Camera_Middleware/cmw_errno.h:
@@ -180,4 +180,5 @@ Src/app_cam.o: C:/Users/nogueirp/InternshipST/Src/app_cam.c \
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/filtering_functions.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h:
+../../../Inc/timing_conf.h:
 ../../../Inc/utils.h:
