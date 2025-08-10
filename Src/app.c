@@ -149,6 +149,7 @@ typedef struct {
   double w;
   double h;
   uint32_t id;
+  int tracked;
 } tbox_info;
 #endif
 
@@ -310,7 +311,8 @@ LL_ATON_DECLARE_NAMED_NN_INSTANCE_AND_INTERFACE(Default);
 /* palm detector */
 LL_ATON_DECLARE_NAMED_NN_INSTANCE_AND_INTERFACE(palm_detector);
 static roi_t rois[PD_MAX_HAND_NB];
-int turn_people_detection = 1;
+static int turn_people_detection = 1;
+static int palm_detector_finished = 0;
 
 /* hand landmark */
 //LL_ATON_DECLARE_NAMED_NN_INSTANCE_AND_INTERFACE(hand_landmark);
@@ -358,9 +360,12 @@ static trk_tbox_t tboxes[2 * AI_OD_PP_MAX_BOXES_LIMIT];
 static trk_dbox_t dboxes[AI_OD_PP_MAX_BOXES_LIMIT];
 static trk_ctx_t trk_ctx;
 // Palm detection
-//static trk_tbox_t tboxes_pd[2 * AI_OD_PP_MAX_BOXES_LIMIT];
+static trk_tbox_t tboxes_pd[2 * AI_OD_PP_MAX_BOXES_LIMIT];
 //static trk_dbox_t dboxes_pd[AI_OD_PP_MAX_BOXES_LIMIT];
 static trk_ctx_t trk_ctx_pd;
+trk_tbox_t raised_hand;
+static uint32_t missed_frames = 0;
+static int tracking_after_raised_hand = 0;
 #endif
 
 
@@ -368,6 +373,7 @@ static trk_ctx_t trk_ctx_pd;
 static int start_program = 1;
 static int start_screen_printed = 0;
 static int sec_counter = 0;
+static int tracking_id = 0;
 
 #if HAS_ROTATION_SUPPORT == 1
 static GFXMMU_HandleTypeDef hgfxmmu;
@@ -1035,7 +1041,18 @@ static void Display_TrackingBox(tbox_info *tbox)
   clamp_point(&x0, &y0);
   clamp_point(&x1, &y1);
 
-  UTIL_LCD_DrawRect(x0, y0, x1 - x0, y1 - y0, colors[tbox->id % NUMBER_COLORS]);
+  if(tracking_after_raised_hand){
+	  if(tbox->id == tracking_id){
+		  UTIL_LCD_DrawRect(x0, y0, x1 - x0, y1 - y0, UTIL_LCD_COLOR_BLUE);
+		  UTIL_LCDEx_PrintfAt(x0 + 1, y0 + 1, LEFT_MODE, "Tracked box %3d", tbox->id);
+	  }
+	  else{
+		  UTIL_LCD_DrawRect(x0, y0, x1 - x0, y1 - y0, UTIL_LCD_COLOR_RED);
+	  }
+  }
+  else{
+	  UTIL_LCD_DrawRect(x0, y0, x1 - x0, y1 - y0, colors[tbox->id % NUMBER_COLORS]);
+  }
   UTIL_LCDEx_PrintfAt(x0 + 1, y0 + 1, LEFT_MODE, "%3d", tbox->id);
 }
 
@@ -1753,24 +1770,15 @@ static void nn_thread_fct(void *arg)
         disp.info.pd_hand_nb = hands;
         disp.info.pd_max_prob = pd_info.pd_out.pOutData[0].prob;
         disp.info.tboxes_valid_nb = 0;
-        for (i = 0; i < ARRAY_NB(tboxes); i++) {
-          if (!tboxes[i].is_tracking || tboxes[i].tlost_cnt)
+        for (i = 0; i < ARRAY_NB(tboxes_pd); i++) {
+          if (!tboxes_pd[i].is_tracking || tboxes_pd[i].tlost_cnt)
             continue;
           printf("Tracked box number = %d \n \r", i);
           disp.info.hands[disp.info.tboxes_valid_nb].is_valid = 1;
-          copy_trk_box_to_pd_box(&disp.info.hands[disp.info.tboxes_valid_nb].pd_hands, &tboxes[i]);
+          copy_trk_box_to_pd_box(&disp.info.hands[disp.info.tboxes_valid_nb].pd_hands, &tboxes_pd[i]);
           cvt_pd_coord_to_screen_coord(&disp.info.hands[disp.info.tboxes_valid_nb].pd_hands);
           disp.info.tboxes_valid_nb++;
-            //pd_box_to_roi(&info->pd_out.pOutData[i], &rois[i]);
-
-          //tbox_to_tbox_info(&tboxes[i], &disp.info.tboxes[disp.info.tboxes_valid_nb]);
         }
-
-//        for(int i = 0; i < hands; i++){
-//            disp.info.hands[i].is_valid = 1;
-//            copy_pd_box(&disp.info.hands[i].pd_hands, &pd_info.pd_out.pOutData[i]);
-//            disp.info.hands[i].roi = rois[i];
-//        }
         ret = xSemaphoreGive(disp.lock);
         assert(ret == pdTRUE);
 
@@ -1805,7 +1813,7 @@ static int TRK_Init_pd()
     .tlost_cnt = 30,
   };
 
-  return trk_init(&trk_ctx_pd, (trk_conf_t *) &cfg, ARRAY_NB(tboxes), tboxes);
+  return trk_init(&trk_ctx_pd, (trk_conf_t *) &cfg, ARRAY_NB(tboxes_pd), tboxes_pd);
 }
 
 static int update_and_capture_tracking_enabled()
@@ -1872,6 +1880,84 @@ static int app_tracking(od_pp_out_t *pp)
 }
 #endif
 
+static int is_hand_inside(trk_tbox_t *person_box){
+	  int xc, yc;
+	  int x0, y0;
+	  int x1, y1;
+	  int w, h;
+
+	  convert_point(person_box->cx, person_box->cy, &xc, &yc);
+	  convert_length(person_box->w, person_box->h, &w, &h);
+
+	  x0 = xc - (w + 1) / 2;
+	  y0 = yc - (h + 1) / 2;
+	  x1 = xc + (w + 1) / 2;
+	  y1 = yc + (h + 1) / 2;
+
+	  clamp_point(&x0, &y0);
+	  clamp_point(&x1, &y1);
+
+	  int xh, yh;
+	  convert_point(raised_hand.cx, raised_hand.cy, &xh, &yh);
+	  printf("X hand = %d, Y hand = %d \n \r", xh, yh);
+
+	  if((xh >= x0) && (xh <= x1) && (yh >= y0) && (yh <= y1)) return 1;
+	  return 0;
+}
+
+static int is_hand_raised(trk_tbox_t *hand){
+	int topx, topy;
+	int botx, boty;
+	pd_pp_box_t hand_pd_box;
+
+	hand_pd_box.pKps = hand->dbox_userdata;
+
+	//topx = (int) hand_pd_box.pKps[0].x;
+	topy = (int) hand_pd_box.pKps[0].y;
+
+	//botx = (int) hand_pd_box.pKps[2].x;
+	boty = (int) hand_pd_box.pKps[2].y;
+
+	if(topy > boty) return 1;
+	return 0;
+}
+
+
+// Select raised hand. If there are multiple, we take the one that has missed fewer frames.
+static int get_raised_hand(){
+    uint32_t less_tcont = 9999;
+    int found = 0;
+	for(int i = 0; i < ARRAY_NB(tboxes_pd); i++){
+		if (!tboxes_pd[i].is_tracking)
+			continue;
+		if(is_hand_raised(&tboxes_pd[i])){
+			if(tboxes_pd[i].tlost_cnt < less_tcont){
+				found = 1;
+				printf("Found a raised hand, ID = %d. \n \r", tboxes_pd[i].id);
+				raised_hand = tboxes_pd[i];
+				less_tcont = tboxes_pd[i].tlost_cnt;
+			}
+		}
+	}
+	return found;
+}
+
+// Matchin raised hand to its respective person bounding box.
+static int match_rhand_to_tbox(){
+     if(!get_raised_hand()){
+    	 return 0;
+     }
+	 for(int i = 0; i < ARRAY_NB(tboxes); i++){
+	      if (!tboxes[i].is_tracking || tboxes[i].tlost_cnt)
+	        continue;
+	      if(is_hand_inside(&tboxes[i])){
+	    	  tracking_id = tboxes[i].id;
+	    	  return 1;
+	      }
+	 }
+	 return 0;
+}
+
 static void pp_thread_fct(void *arg)
 {
 #if POSTPROCESS_TYPE == POSTPROCESS_OD_YOLO_V2_UF
@@ -1914,6 +2000,24 @@ static void pp_thread_fct(void *arg)
     tracking_enabled = app_tracking(&pp_output);
 
     nn_pp[1] = HAL_GetTick();
+
+    // After palm detector model has ran, we're gonna assign the detected raised hand to its respective person bounding box.
+    if(palm_detector_finished){
+    	if(match_rhand_to_tbox()){
+    		printf("Matched the raised hand to a person bounding box. \n \r ");
+    		tracking_after_raised_hand = 1;
+    		palm_detector_finished = 0;
+    		missed_frames = 0;
+    	}
+    	else{
+    		missed_frames++;
+    		if(missed_frames == 10){
+    			palm_detector_finished = 0;
+    			printf("Could not match raised hand no any person bounding box. \n \r");
+    		}
+    	}
+    }
+
 
     /* update display stats and detection info */
     ret = xSemaphoreTake(disp.lock, portMAX_DELAY);
@@ -2212,8 +2316,6 @@ void BSP_PB_Callback(Button_TypeDef Button){
 		printf("Button TAMP pressed - ");
 		if(start_program){
 			printf("Stop program. \n \r");
-			int ret = TRK_Init();
-			assert(ret == 0);
 			BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 			start_program = 0;
 			start_screen_printed = 0;
@@ -2226,6 +2328,9 @@ void BSP_PB_Callback(Button_TypeDef Button){
 		else{
 			printf("Start program. \n \r");
 			start_program = 1;
+			turn_people_detection = 1;
+			int ret = TRK_Init();
+			assert(ret == 0);
 			xTaskResumeFromISR(nn);
 			xTaskResumeFromISR(pp);
 			xTaskResumeFromISR(isp);
@@ -2237,12 +2342,25 @@ void BSP_PB_Callback(Button_TypeDef Button){
 // Timer Period Elapsed Event
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
+    sec_counter++;
 	printf("Time = %d \n \r", sec_counter);
-	if(++sec_counter == PEOPLE_D_RUNNING_TIME){
-		int ret = TRK_Init();
+	// Switching from people detection to palm detection.
+	if(tracking_after_raised_hand){
+		HAL_TIM_Base_Stop_IT(&htim2);
+	}
+	else if( (turn_people_detection) && (sec_counter == PEOPLE_D_RUNNING_TIME) ){
+		int ret = TRK_Init_pd();
 		assert(ret == 0);
 		turn_people_detection = 0;
-		HAL_TIM_Base_Stop_IT(&htim2);
+		sec_counter = 0;
+		//HAL_TIM_Base_Stop_IT(&htim2);
+	}
+	else if( (!turn_people_detection) && (sec_counter == PALM_D_RUNNING_TIME) ){
+		int ret = TRK_Init();
+		assert(ret == 0);
+		turn_people_detection = 1;
+		palm_detector_finished = 1;
+		sec_counter = 0;
 	}
 }
 
