@@ -1,6 +1,6 @@
 STM32Cube_FW_N6/Drivers/BSP/Components/aps256xx/aps256xx.o: \
- C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/Components/aps256xx/aps256xx.c \
- C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/Components/aps256xx/aps256xx.h \
+ C:/Users/madmc/OneDrive/InternshipST/STM32Cube_FW_N6/Drivers/BSP/Components/aps256xx/aps256xx.c \
+ C:/Users/madmc/OneDrive/InternshipST/STM32Cube_FW_N6/Drivers/BSP/Components/aps256xx/aps256xx.h \
  ../../../Inc/aps256xx_conf.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h \
  ../../../Inc/stm32n6xx_hal_conf.h \
@@ -49,7 +49,7 @@ STM32Cube_FW_N6/Drivers/BSP/Components/aps256xx/aps256xx.o: \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_xspi.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_cacheaxi.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_gpu2d.h
-C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/Components/aps256xx/aps256xx.h:
+C:/Users/madmc/OneDrive/InternshipST/STM32Cube_FW_N6/Drivers/BSP/Components/aps256xx/aps256xx.h:
 ../../../Inc/aps256xx_conf.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h:
 ../../../Inc/stm32n6xx_hal_conf.h:

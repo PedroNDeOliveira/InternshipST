@@ -1,5 +1,5 @@
 Lib/FreeRTOS/Source/queue.o: \
- C:/Users/nogueirp/InternshipST/Lib/FreeRTOS/Source/queue.c \
+ C:/Users/madmc/OneDrive/InternshipST/Lib/FreeRTOS/Source/queue.c \
  ../../../Lib/FreeRTOS/Source/include/FreeRTOS.h \
  ../../../Inc/FreeRTOSConfig.h \
  ../../../Lib/FreeRTOS/Source/include/projdefs.h \

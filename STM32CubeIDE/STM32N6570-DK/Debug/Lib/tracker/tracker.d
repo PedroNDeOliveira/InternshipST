@@ -1,8 +1,8 @@
 Lib/tracker/tracker.o: \
- C:/Users/nogueirp/InternshipST/Lib/tracker/tracker.c \
- C:/Users/nogueirp/InternshipST/Lib/tracker/tracker.h \
- C:/Users/nogueirp/InternshipST/Lib/tracker/kf.h \
- C:/Users/nogueirp/InternshipST/Lib/tracker/ulist.h \
+ C:/Users/madmc/OneDrive/InternshipST/Lib/tracker/tracker.c \
+ C:/Users/madmc/OneDrive/InternshipST/Lib/tracker/tracker.h \
+ C:/Users/madmc/OneDrive/InternshipST/Lib/tracker/kf.h \
+ C:/Users/madmc/OneDrive/InternshipST/Lib/tracker/ulist.h \
  ../../../Inc/app_config.h ../../../Inc/postprocess_conf.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math_types.h \
@@ -36,9 +36,9 @@ Lib/tracker/tracker.o: \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h \
  ../../../Inc/timing_conf.h
-C:/Users/nogueirp/InternshipST/Lib/tracker/tracker.h:
-C:/Users/nogueirp/InternshipST/Lib/tracker/kf.h:
-C:/Users/nogueirp/InternshipST/Lib/tracker/ulist.h:
+C:/Users/madmc/OneDrive/InternshipST/Lib/tracker/tracker.h:
+C:/Users/madmc/OneDrive/InternshipST/Lib/tracker/kf.h:
+C:/Users/madmc/OneDrive/InternshipST/Lib/tracker/ulist.h:
 ../../../Inc/app_config.h:
 ../../../Inc/postprocess_conf.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math.h:

@@ -1,5 +1,5 @@
 Lib/FreeRTOS/Source/portable/GCC/ARM_CM55_NTZ/non_secure/port.o: \
- C:/Users/nogueirp/InternshipST/Lib/FreeRTOS/Source/portable/GCC/ARM_CM55_NTZ/non_secure/port.c \
+ C:/Users/madmc/OneDrive/InternshipST/Lib/FreeRTOS/Source/portable/GCC/ARM_CM55_NTZ/non_secure/port.c \
  ../../../Lib/FreeRTOS/Source/include/FreeRTOS.h \
  ../../../Inc/FreeRTOSConfig.h \
  ../../../Lib/FreeRTOS/Source/include/projdefs.h \
@@ -12,7 +12,7 @@ Lib/FreeRTOS/Source/portable/GCC/ARM_CM55_NTZ/non_secure/port.o: \
  ../../../Lib/FreeRTOS/Source/include/list.h \
  ../../../Lib/FreeRTOS/Source/include/mpu_wrappers.h \
  ../../../Lib/FreeRTOS/Source/include/mpu_syscall_numbers.h \
- C:/Users/nogueirp/InternshipST/Lib/FreeRTOS/Source/portable/GCC/ARM_CM55_NTZ/non_secure/portasm.h
+ C:/Users/madmc/OneDrive/InternshipST/Lib/FreeRTOS/Source/portable/GCC/ARM_CM55_NTZ/non_secure/portasm.h
 ../../../Lib/FreeRTOS/Source/include/FreeRTOS.h:
 ../../../Inc/FreeRTOSConfig.h:
 ../../../Lib/FreeRTOS/Source/include/projdefs.h:
@@ -25,4 +25,4 @@ Lib/FreeRTOS/Source/portable/GCC/ARM_CM55_NTZ/non_secure/port.o: \
 ../../../Lib/FreeRTOS/Source/include/list.h:
 ../../../Lib/FreeRTOS/Source/include/mpu_wrappers.h:
 ../../../Lib/FreeRTOS/Source/include/mpu_syscall_numbers.h:
-C:/Users/nogueirp/InternshipST/Lib/FreeRTOS/Source/portable/GCC/ARM_CM55_NTZ/non_secure/portasm.h:
+C:/Users/madmc/OneDrive/InternshipST/Lib/FreeRTOS/Source/portable/GCC/ARM_CM55_NTZ/non_secure/portasm.h:

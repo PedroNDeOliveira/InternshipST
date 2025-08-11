@@ -32,11 +32,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>Model/hand_landmark.c</name>
-			<type>1</type>
-			<location>C:/Users/nogueirp/CES_Demo/Model/hand_landmark.c</location>
-		</link>
-		<link>
 			<name>Model/network.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Model/network.c</locationURI>
@@ -44,7 +39,7 @@
 		<link>
 			<name>Model/palm_detector.c</name>
 			<type>1</type>
-			<location>C:/Users/nogueirp/CES_Demo/Model/palm_detector.c</location>
+			<location>C:/Users/madmc/OneDrive/InternshipST/Model/palm_detector.c</location>
 		</link>
 		<link>
 			<name>Src/app.c</name>
@@ -72,11 +67,6 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Src/main.c</locationURI>
 		</link>
 		<link>
-			<name>Src/nema_hal_freertos.c</name>
-			<type>1</type>
-			<location>C:/Users/nogueirp/CES_Demo/Src/nema_hal_freertos.c</location>
-		</link>
-		<link>
 			<name>Src/stm32_lcd_ex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/stm32_lcd_ex.c</locationURI>
@@ -84,7 +74,7 @@
 		<link>
 			<name>Src/stm32n6xx_hal_msp.c</name>
 			<type>1</type>
-			<location>C:/Users/nogueirp/InternshipST/Src/stm32n6xx_hal_msp.c</location>
+			<location>C:/Users/madmc/OneDrive/InternshipST/Src/stm32n6xx_hal_msp.c</location>
 		</link>
 		<link>
 			<name>Src/stm32n6xx_it.c</name>
@@ -179,7 +169,7 @@
 		<link>
 			<name>Lib/ipl/IPL_resize.c</name>
 			<type>1</type>
-			<location>C:/Users/nogueirp/CES_Demo/Lib/ipl/Src/IPL_resize.c</location>
+			<location>C:/Users/madmc/OneDrive/InternshipST/Lib/ipl/Src/IPL_resize.c</location>
 		</link>
 		<link>
 			<name>Lib/tracker/kf.c</name>
@@ -344,7 +334,7 @@
 		<link>
 			<name>Lib/lib_vision_models_pp/lib_vision_models_pp/Src/pd_pp_model.c</name>
 			<type>1</type>
-			<location>C:/Users/nogueirp/CES_Demo/Lib/lib_vision_models_pp/lib_vision_models_pp/Src/pd_pp_model.c</location>
+			<location>C:/Users/madmc/OneDrive/InternshipST/Lib/lib_vision_models_pp/lib_vision_models_pp/Src/pd_pp_model.c</location>
 		</link>
 		<link>
 			<name>Lib/lib_vision_models_pp/lib_vision_models_pp/Src/vision_models_pp.c</name>
@@ -439,7 +429,7 @@
 		<link>
 			<name>STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_gpu2d.c</name>
 			<type>1</type>
-			<location>C:/Users/nogueirp/CES_Demo/STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_gpu2d.c</location>
+			<location>C:/Users/madmc/OneDrive/InternshipST/STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_gpu2d.c</location>
 		</link>
 		<link>
 			<name>STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_i2c.c</name>
@@ -514,7 +504,7 @@
 		<link>
 			<name>STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_tim_ex.c</name>
 			<type>1</type>
-			<location>C:/Users/nogueirp/CES_Demo/STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_tim_ex.c</location>
+			<location>C:/Users/madmc/OneDrive/InternshipST/STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_tim_ex.c</location>
 		</link>
 		<link>
 			<name>STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_uart.c</name>

@@ -1,4 +1,4 @@
-Src/app_cam.o: C:/Users/nogueirp/InternshipST/Src/app_cam.c \
+Src/app_cam.o: C:/Users/madmc/OneDrive/InternshipST/Src/app_cam.c \
  ../../../Inc/app.h ../../../Lib/Camera_Middleware/cmw_camera.h \
  ../../../Lib/Camera_Middleware/cmw_errno.h \
  ../../../Inc/cmw_camera_conf.h \

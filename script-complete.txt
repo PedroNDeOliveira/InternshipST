@@ -1,5 +1,5 @@
 # Set path to CubeProgrammer tools
-$CPROG_PTH = "C:\ST\STM32CubeIDE_1.18.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.win32_2.2.100.202412061334\tools\bin"
+$CPROG_PTH = "C:\ST\STM32CubeIDE_1.17.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.win32_2.2.100.202412061334\tools\bin"
 
 # Executables
 $SGN_BIN =  "STM32_SigningTool_CLI.exe"
@@ -8,7 +8,7 @@ $CP_BIN =  "STM32_Programmer_CLI.exe"
 # Files and addresses
 $OUTPUT_BIN = ".\STM32CubeIDE\STM32N6570-DK\Debug\x-cube-n6-ai-people-detection-tracking-dk.bin"
 $OUTPUT_SIGNED = ".\STM32CubeIDE\STM32N6570-DK\Debug\x-cube-n6-ai-people-detection-tracking-dk-signed.bin"
-$OUTPUT_DEST_ADDR = "0x70100000"
+$OUTPUT_DEST_ADDR = "0x72000000"
 
 $OUTPUT_FSBL = ".\Binary\ai_fsbl.hex"
 

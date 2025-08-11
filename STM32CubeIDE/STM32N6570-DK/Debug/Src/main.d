@@ -1,5 +1,6 @@
-Src/main.o: C:/Users/nogueirp/InternshipST/Src/main.c ../../../Inc/app.h \
- ../../../Inc/app_config.h ../../../Inc/postprocess_conf.h \
+Src/main.o: C:/Users/madmc/OneDrive/InternshipST/Src/main.c \
+ ../../../Inc/app.h ../../../Inc/app_config.h \
+ ../../../Inc/postprocess_conf.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math_types.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/cmsis_compiler.h \

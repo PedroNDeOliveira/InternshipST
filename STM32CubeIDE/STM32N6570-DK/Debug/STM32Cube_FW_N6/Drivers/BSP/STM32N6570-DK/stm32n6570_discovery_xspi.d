@@ -1,6 +1,6 @@
 STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_xspi.o: \
- C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_xspi.c \
- C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_xspi.h \
+ C:/Users/madmc/OneDrive/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_xspi.c \
+ C:/Users/madmc/OneDrive/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_xspi.h \
  ../../../Inc/stm32n6570_discovery_conf.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h \
  ../../../Inc/stm32n6xx_hal_conf.h \
@@ -49,12 +49,12 @@ STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_xspi.o: \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_xspi.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_cacheaxi.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_gpu2d.h \
- C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_errno.h \
- C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/../Components/mx66uw1g45g/mx66uw1g45g.h \
+ C:/Users/madmc/OneDrive/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_errno.h \
+ C:/Users/madmc/OneDrive/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/../Components/mx66uw1g45g/mx66uw1g45g.h \
  ../../../Inc/mx66uw1g45g_conf.h \
- C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/../Components/aps256xx/aps256xx.h \
+ C:/Users/madmc/OneDrive/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/../Components/aps256xx/aps256xx.h \
  ../../../Inc/aps256xx_conf.h
-C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_xspi.h:
+C:/Users/madmc/OneDrive/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_xspi.h:
 ../../../Inc/stm32n6570_discovery_conf.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h:
 ../../../Inc/stm32n6xx_hal_conf.h:
@@ -103,8 +103,8 @@ C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_xspi.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_cacheaxi.h:
 ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_gpu2d.h:
-C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_errno.h:
-C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/../Components/mx66uw1g45g/mx66uw1g45g.h:
+C:/Users/madmc/OneDrive/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_errno.h:
+C:/Users/madmc/OneDrive/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/../Components/mx66uw1g45g/mx66uw1g45g.h:
 ../../../Inc/mx66uw1g45g_conf.h:
-C:/Users/nogueirp/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/../Components/aps256xx/aps256xx.h:
+C:/Users/madmc/OneDrive/InternshipST/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/../Components/aps256xx/aps256xx.h:
 ../../../Inc/aps256xx_conf.h:

@@ -1,4 +1,5 @@
-Lib/ipl/IPL_resize.o: C:/Users/nogueirp/CES_Demo/Lib/ipl/Src/IPL_resize.c \
+Lib/ipl/IPL_resize.o: \
+ C:/Users/madmc/OneDrive/InternshipST/Lib/ipl/Src/IPL_resize.c \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math_types.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/cmsis_compiler.h \
@@ -31,8 +32,8 @@ Lib/ipl/IPL_resize.o: C:/Users/nogueirp/CES_Demo/Lib/ipl/Src/IPL_resize.c \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h \
  ../../../Lib/ipl/Inc/IPL_resize.h \
- C:/Users/nogueirp/CES_Demo/Lib/ipl/Src/IPL_resize_bilinear_private.h \
- C:/Users/nogueirp/CES_Demo/Lib/ipl/Src/IPL_resize_nearest_private.h
+ C:/Users/madmc/OneDrive/InternshipST/Lib/ipl/Src/IPL_resize_bilinear_private.h \
+ C:/Users/madmc/OneDrive/InternshipST/Lib/ipl/Src/IPL_resize_nearest_private.h
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math_types.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/cmsis_compiler.h:
@@ -65,5 +66,5 @@ Lib/ipl/IPL_resize.o: C:/Users/nogueirp/CES_Demo/Lib/ipl/Src/IPL_resize.c \
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/support_functions.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h:
 ../../../Lib/ipl/Inc/IPL_resize.h:
-C:/Users/nogueirp/CES_Demo/Lib/ipl/Src/IPL_resize_bilinear_private.h:
-C:/Users/nogueirp/CES_Demo/Lib/ipl/Src/IPL_resize_nearest_private.h:
+C:/Users/madmc/OneDrive/InternshipST/Lib/ipl/Src/IPL_resize_bilinear_private.h:
+C:/Users/madmc/OneDrive/InternshipST/Lib/ipl/Src/IPL_resize_nearest_private.h:

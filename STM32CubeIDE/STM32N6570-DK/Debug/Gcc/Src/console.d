@@ -1,4 +1,4 @@
-Gcc/Src/console.o: C:/Users/nogueirp/InternshipST/Gcc/Src/console.c \
+Gcc/Src/console.o: C:/Users/madmc/OneDrive/InternshipST/Gcc/Src/console.c \
  ../../../Inc/main.h \
  ../../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h \
  ../../../Inc/stm32n6xx_hal_conf.h \

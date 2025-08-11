@@ -55,6 +55,7 @@ static void IAC_Config();
 static void CONSOLE_Config(void);
 static int main_freertos(void);
 static void main_thread_fct(void *arg);
+static void motor_init();
 
 /* This is defined in port.c */
 void vPortSetupTimerInterrupt(void);
@@ -395,6 +396,38 @@ static void TIM2_Config(){
 
 }
 
+static void motor_init(){
+	  GPIO_InitTypeDef GPIO_InitStruct = {0};
+	  /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+	  /* USER CODE END MX_GPIO_Init_1 */
+
+	  /* GPIO Ports Clock Enable */
+	__HAL_RCC_GPIOH_CLK_ENABLE();
+	__HAL_RCC_GPIOE_CLK_ENABLE();
+
+
+	  /*Configure GPIO pin Output Level */
+	  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15, GPIO_PIN_RESET);
+
+	  /*Configure GPIO pin : PE15 */
+	  GPIO_InitStruct.Pin = GPIO_PIN_15;
+	  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	  GPIO_InitStruct.Pull = GPIO_NOPULL;
+	  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+	  /*Configure GPIO pin Output Level */
+	  HAL_GPIO_WritePin(GPIOH, GPIO_PIN_8, GPIO_PIN_RESET);
+
+	  /*Configure GPIO pin : PH8 */
+	  GPIO_InitStruct.Pin = GPIO_PIN_8;
+	  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	  GPIO_InitStruct.Pull = GPIO_NOPULL;
+	  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	  HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
+}
+
 static int main_freertos()
 {
   TaskHandle_t hdl;
@@ -440,6 +473,7 @@ static void main_thread_fct(void *arg)
   NPUCache_config();
 
   TIM2_Config();
+  motor_init();
 
 #ifdef STM32N6570_DK_REV
   /*** External RAM and NOR Flash *********************************************/

@@ -1,4 +1,5 @@
-Src/stm32_lcd_ex.o: C:/Users/nogueirp/InternshipST/Src/stm32_lcd_ex.c \
+Src/stm32_lcd_ex.o: \
+ C:/Users/madmc/OneDrive/InternshipST/Src/stm32_lcd_ex.c \
  ../../../Inc/stm32_lcd_ex.h \
  ../../../STM32Cube_FW_N6/Utilities/lcd/stm32_lcd.h \
  ../../../STM32Cube_FW_N6/Utilities/lcd/../Fonts/fonts.h \

@@ -290,7 +290,7 @@ static const uint32_t colors[NUMBER_COLORS] = {
 
 /* Lcd Background Buffer */
 static uint8_t lcd_bg_buffer[DISPLAY_BUFFER_NB][LCD_BG_WIDTH * LCD_BG_HEIGHT * DISPLAY_BPP] ALIGN_32 IN_PSRAM;
-//static uint8_t lcd_bg_buffer_const_black[LCD_BG_WIDTH * LCD_BG_HEIGHT * DISPLAY_BPP] ALIGN_32 IN_PSRAM;
+static uint8_t lcd_bg_buffer_const_black[LCD_BG_WIDTH * LCD_BG_HEIGHT * DISPLAY_BPP] ALIGN_32 IN_PSRAM;
 //static uint8_t lcd_bg_buffer_resized[192 * 192 * DISPLAY_BPP] ALIGN_32 IN_PSRAM; // Testing resizing operation.
 
 static int lcd_bg_buffer_disp_idx = 1;
@@ -347,11 +347,14 @@ static StaticTask_t isp_thread;
 static StackType_t isp_thread_stack[2 *configMINIMAL_STACK_SIZE];
 static SemaphoreHandle_t isp_sem;
 static StaticSemaphore_t isp_sem_buffer;
+static StaticTask_t mt_thread;
+static StackType_t mt_thread_stack[2 *configMINIMAL_STACK_SIZE];
 
 static TaskHandle_t nn;
 static TaskHandle_t pp;
 static TaskHandle_t dp;
 static TaskHandle_t isp;
+static TaskHandle_t mt;
 
 /* tracking state */
 #ifdef TRACKER_MODULE
@@ -663,10 +666,13 @@ static void reload_bg_layer(int next_disp_idx)
   int ret;
 
   if(!start_program){
-	  memset(lcd_bg_buffer[next_disp_idx], 0, sizeof(lcd_bg_buffer[next_disp_idx]));
+	  ret = SCRL_SetAddress_NoReload(lcd_bg_buffer_const_black, SCRL_LAYER_0); // Changed it here.
+	  assert(ret == 0);
   }
-  ret = SCRL_SetAddress_NoReload(lcd_bg_buffer[next_disp_idx], SCRL_LAYER_0); // Changed it here.
-  assert(ret == 0);
+  else{
+	  ret = SCRL_SetAddress_NoReload(lcd_bg_buffer[next_disp_idx], SCRL_LAYER_0); // Changed it here.
+	  assert(ret == 0);
+  }
 
   ret = SCRL_ReloadLayer(SCRL_LAYER_0);
   assert(ret == 0);
@@ -1044,16 +1050,17 @@ static void Display_TrackingBox(tbox_info *tbox)
   if(tracking_after_raised_hand){
 	  if(tbox->id == tracking_id){
 		  UTIL_LCD_DrawRect(x0, y0, x1 - x0, y1 - y0, UTIL_LCD_COLOR_BLUE);
-		  UTIL_LCDEx_PrintfAt(x0 + 1, y0 + 1, LEFT_MODE, "Tracked box %3d", tbox->id);
+		  UTIL_LCDEx_PrintfAt(x0 + 1, y0 + 1, LEFT_MODE, "%2d Tracked box", tbox->id);
 	  }
 	  else{
 		  UTIL_LCD_DrawRect(x0, y0, x1 - x0, y1 - y0, UTIL_LCD_COLOR_RED);
+		  UTIL_LCDEx_PrintfAt(x0 + 1, y0 + 1, LEFT_MODE, "%3d", tbox->id);
 	  }
   }
   else{
 	  UTIL_LCD_DrawRect(x0, y0, x1 - x0, y1 - y0, colors[tbox->id % NUMBER_COLORS]);
+	  UTIL_LCDEx_PrintfAt(x0 + 1, y0 + 1, LEFT_MODE, "%3d", tbox->id);
   }
-  UTIL_LCDEx_PrintfAt(x0 + 1, y0 + 1, LEFT_MODE, "%3d", tbox->id);
 }
 
 static void Display_NetworkOutput_Tracking(display_info_t *info)
@@ -1880,46 +1887,74 @@ static int app_tracking(od_pp_out_t *pp)
 }
 #endif
 
-static int is_hand_inside(trk_tbox_t *person_box){
-	  int xc, yc;
-	  int x0, y0;
-	  int x1, y1;
-	  int w, h;
+//static int is_hand_inside(trk_tbox_t *person_box){
+//          int xc, yc;
+//          int x0, y0;
+//          int x1, y1;
+//          int w, h;
+//
+//          convert_point(person_box->cx, person_box->cy, &xc, &yc);
+//          convert_length(person_box->w, person_box->h, &w, &h);
+//
+//          x0 = xc - (w + 1) / 2;
+//          y0 = yc - (h + 1) / 2;
+//          x1 = xc + (w + 1) / 2;
+//          y1 = yc + (h + 1) / 2;
+//
+//          clamp_point(&x0, &y0);
+//          clamp_point(&x1, &y1);
+//
+//          int xh, yh;
+//          convert_point(raised_hand.cx, raised_hand.cy, &xh, &yh);
+//          printf("X hand = %d, Y hand = %d \n \r", xh, yh);
+//
+//          if((xh >= x0) && (xh <= x1) && (yh >= y0) && (yh <= y1)) return 1;
+//          return 0;
+//}
 
-	  convert_point(person_box->cx, person_box->cy, &xc, &yc);
-	  convert_length(person_box->w, person_box->h, &w, &h);
+static double comp_euclidean_centers_dist(trk_tbox_t *person_box){
+          int xc, yc;
+          int x0, y0;
+          int x1, y1;
+          int w, h;
 
-	  x0 = xc - (w + 1) / 2;
-	  y0 = yc - (h + 1) / 2;
-	  x1 = xc + (w + 1) / 2;
-	  y1 = yc + (h + 1) / 2;
+          convert_point(person_box->cx, person_box->cy, &xc, &yc);
+          convert_length(person_box->w, person_box->h, &w, &h);
 
-	  clamp_point(&x0, &y0);
-	  clamp_point(&x1, &y1);
+          x0 = xc - (w + 1) / 2;
+          y0 = yc - (h + 1) / 2;
+          x1 = xc + (w + 1) / 2;
+          y1 = yc + (h + 1) / 2;
 
-	  int xh, yh;
-	  convert_point(raised_hand.cx, raised_hand.cy, &xh, &yh);
-	  printf("X hand = %d, Y hand = %d \n \r", xh, yh);
+          clamp_point(&x0, &y0);
+          clamp_point(&x1, &y1);
 
-	  if((xh >= x0) && (xh <= x1) && (yh >= y0) && (yh <= y1)) return 1;
-	  return 0;
+          int xh, yh;
+          convert_point(raised_hand.cx, raised_hand.cy, &xh, &yh);
+
+        double xdist = (xh - xc)*(xh - xc);
+        double ydist = (yh - yc)*(yh - yc);
+
+        return sqrt(xdist + ydist);
 }
 
 static int is_hand_raised(trk_tbox_t *hand){
-	int topx, topy;
-	int botx, boty;
-	pd_pp_box_t hand_pd_box;
+        int topx, topy;
+        int botx, boty;
+        pd_pp_box_t hand_pd_box;
 
-	hand_pd_box.pKps = hand->dbox_userdata;
+        if(hand->dbox_userdata == NULL) return 0;
 
-	//topx = (int) hand_pd_box.pKps[0].x;
-	topy = (int) hand_pd_box.pKps[0].y;
+        hand_pd_box.pKps = (pd_pp_point_t *) hand->dbox_userdata;
 
-	//botx = (int) hand_pd_box.pKps[2].x;
-	boty = (int) hand_pd_box.pKps[2].y;
+        //topx = (int) hand_pd_box.pKps[0].x;
+        topy = (int) hand_pd_box.pKps[0].y;
 
-	if(topy > boty) return 1;
-	return 0;
+        //botx = (int) hand_pd_box.pKps[2].x;
+        boty = (int) hand_pd_box.pKps[2].y;
+
+        if(topy > boty) return 1;
+        return 0;
 }
 
 
@@ -1927,35 +1962,41 @@ static int is_hand_raised(trk_tbox_t *hand){
 static int get_raised_hand(){
     uint32_t less_tcont = 9999;
     int found = 0;
-	for(int i = 0; i < ARRAY_NB(tboxes_pd); i++){
-		if (!tboxes_pd[i].is_tracking)
-			continue;
-		if(is_hand_raised(&tboxes_pd[i])){
-			if(tboxes_pd[i].tlost_cnt < less_tcont){
-				found = 1;
-				printf("Found a raised hand, ID = %d. \n \r", tboxes_pd[i].id);
-				raised_hand = tboxes_pd[i];
-				less_tcont = tboxes_pd[i].tlost_cnt;
-			}
-		}
-	}
-	return found;
+        for(int i = 0; i < ARRAY_NB(tboxes_pd); i++){
+                if (!tboxes_pd[i].is_tracking)
+                        continue;
+                if(is_hand_raised(&tboxes_pd[i])){
+                        if(tboxes_pd[i].tlost_cnt < less_tcont){
+                                found = 1;
+                                printf("Found a raised hand, ID = %d. \n \r", tboxes_pd[i].id);
+                                raised_hand = tboxes_pd[i];
+                                less_tcont = tboxes_pd[i].tlost_cnt;
+                        }
+                }
+        }
+        return found;
 }
 
 // Matchin raised hand to its respective person bounding box.
 static int match_rhand_to_tbox(){
+        double max_dist = 900;
+        double dist;
      if(!get_raised_hand()){
-    	 return 0;
+             return 0;
      }
-	 for(int i = 0; i < ARRAY_NB(tboxes); i++){
-	      if (!tboxes[i].is_tracking || tboxes[i].tlost_cnt)
-	        continue;
-	      if(is_hand_inside(&tboxes[i])){
-	    	  tracking_id = tboxes[i].id;
-	    	  return 1;
-	      }
-	 }
-	 return 0;
+     tracking_id = -1;
+         for(int i = 0; i < ARRAY_NB(tboxes); i++){
+              if (!tboxes[i].is_tracking || tboxes[i].tlost_cnt)
+                continue;
+              dist = comp_euclidean_centers_dist(&tboxes[i]);
+              printf("Computed distance is = %d \n \r", (int)dist);
+              if(dist < max_dist){
+                      max_dist = dist;
+                      tracking_id = tboxes[i].id;
+              }
+         }
+         if(tracking_id != -1) return 1;
+         return 0;
 }
 
 static void pp_thread_fct(void *arg)
@@ -2167,9 +2208,60 @@ static void Display_init()
   UTIL_LCD_SetTextColor(UTIL_LCD_COLOR_WHITE);
 
   // Setting black screen.
-  //memset(lcd_bg_buffer_const_black, 0, sizeof(lcd_bg_buffer_const_black));
+  memset(lcd_bg_buffer_const_black, 0, sizeof(lcd_bg_buffer_const_black));
 }
 
+static uint32_t compute_delta(){
+	int xc, yc;
+	 for(int i = 0; i < ARRAY_NB(tboxes); i++){
+	      if (!tboxes[i].is_tracking || tboxes[i].tlost_cnt)
+	        continue;
+	      if(tboxes[i].id  == tracking_id){
+	    	  convert_point(tboxes[i].cx, tboxes[i].cy, &xc, &yc);
+	    	  return (xc - LCD_BG_WIDTH/2);
+	      }
+	 }
+	 return 0;
+}
+
+static void motor_step(int dir){
+	if(dir){
+		HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15, GPIO_PIN_SET);
+	}
+	else{
+		HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15, GPIO_PIN_RESET);
+	}
+	HAL_GPIO_WritePin(GPIOH, GPIO_PIN_8, GPIO_PIN_SET);
+	HAL_Delay(1);
+	HAL_GPIO_WritePin(GPIOH, GPIO_PIN_8, GPIO_PIN_RESET);
+}
+
+static void motor_tracking(uint32_t delta){
+	for(int i = 0; i < abs(delta)/8; i++){
+		if(delta > 0){
+			//printf("going left. \n \r");
+			motor_step(1);
+		}
+		else{
+			//printf("going right. \n \r");
+			motor_step(0);
+		}
+	}
+}
+
+// PE15 dir and PH8 step.
+
+static void mt_thread_fct(void *arg){
+	//int ret;
+	uint32_t delta = 0;
+	while(1){
+		if(tracking_after_raised_hand){
+			delta = compute_delta();
+			printf("Delta = %u \n \r", delta);
+			motor_tracking(delta);
+		}
+	}
+}
 //static void Display_init()
 //{
 //  SCRL_LayerConfig layers_config[2] = {
@@ -2212,6 +2304,7 @@ void app_run()
   UBaseType_t pp_priority = FREERTOS_PRIORITY(-2);
   UBaseType_t dp_priority = FREERTOS_PRIORITY(-2);
   UBaseType_t nn_priority = FREERTOS_PRIORITY(1);
+  UBaseType_t mt_priority = FREERTOS_PRIORITY(-2);
   //UBaseType_t nn_hand_priority = FREERTOS_PRIORITY(1);
   int ret;
 
@@ -2222,8 +2315,6 @@ void app_run()
   /* screen init */
   memset(lcd_bg_buffer, 0, sizeof(lcd_bg_buffer));
   CACHE_OP(SCB_CleanInvalidateDCache_by_Addr(lcd_bg_buffer, sizeof(lcd_bg_buffer)));
-//  memset(lcd_bg_buffer_resized, 0, sizeof(lcd_bg_buffer_resized));
-//  CACHE_OP(SCB_CleanInvalidateDCache_by_Addr(lcd_bg_buffer_resized, sizeof(lcd_bg_buffer_resized)));
   memset(lcd_fg_buffer, 0, sizeof(lcd_fg_buffer));
   CACHE_OP(SCB_CleanInvalidateDCache_by_Addr(lcd_fg_buffer, sizeof(lcd_fg_buffer)));
   Display_init();
@@ -2245,8 +2336,6 @@ void app_run()
 
 
   cpuload_init(&cpu_load);
-
-  //HAL_TIM_Base_Start_IT(&htim2);
 
   /*** Camera Init ************************************************************/  
   CAM_Init();
@@ -2275,6 +2364,10 @@ void app_run()
   isp = xTaskCreateStatic(isp_thread_fct, "isp", configMINIMAL_STACK_SIZE * 2, NULL, isp_priority, isp_thread_stack,
                           &isp_thread);
   assert(isp != NULL);
+
+  mt = xTaskCreateStatic(mt_thread_fct, "mt", configMINIMAL_STACK_SIZE * 2, NULL, mt_priority, mt_thread_stack,
+                          &mt_thread);
+  assert(mt != NULL);
 }
 
 //static void load_Bg_Black_Screen(){

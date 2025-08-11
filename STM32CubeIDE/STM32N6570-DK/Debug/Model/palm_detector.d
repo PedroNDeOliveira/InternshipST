@@ -1,4 +1,5 @@
-Model/palm_detector.o: C:/Users/nogueirp/CES_Demo/Model/palm_detector.c \
+Model/palm_detector.o: \
+ C:/Users/madmc/OneDrive/InternshipST/Model/palm_detector.c \
  ../../../Lib/AI_Runtime/Npu/ll_aton/ll_aton_NN_interface.h \
  ../../../Lib/AI_Runtime/Npu/ll_aton/ll_aton_config.h \
  ../../../Lib/AI_Runtime/Npu/ll_aton/ll_aton_attributes.h \
@@ -83,7 +84,7 @@ Model/palm_detector.o: C:/Users/nogueirp/CES_Demo/Model/palm_detector.c \
  ../../../Lib/AI_Runtime/Npu/ll_aton/ll_sw_integer.h \
  ../../../Lib/AI_Runtime/Npu/ll_aton/ecloader.h \
  ../../../Lib/AI_Runtime/Npu/ll_aton/ec.h \
- C:/Users/nogueirp/CES_Demo/Model/palm_detector_ecblobs.h \
+ C:/Users/madmc/OneDrive/InternshipST/Model/palm_detector_ecblobs.h \
  ../../../Lib/AI_Runtime/Npu/ll_aton/ll_aton_caches_interface.h
 ../../../Lib/AI_Runtime/Npu/ll_aton/ll_aton_NN_interface.h:
 ../../../Lib/AI_Runtime/Npu/ll_aton/ll_aton_config.h:
@@ -169,5 +170,5 @@ Model/palm_detector.o: C:/Users/nogueirp/CES_Demo/Model/palm_detector.c \
 ../../../Lib/AI_Runtime/Npu/ll_aton/ll_sw_integer.h:
 ../../../Lib/AI_Runtime/Npu/ll_aton/ecloader.h:
 ../../../Lib/AI_Runtime/Npu/ll_aton/ec.h:
-C:/Users/nogueirp/CES_Demo/Model/palm_detector_ecblobs.h:
+C:/Users/madmc/OneDrive/InternshipST/Model/palm_detector_ecblobs.h:
 ../../../Lib/AI_Runtime/Npu/ll_aton/ll_aton_caches_interface.h:

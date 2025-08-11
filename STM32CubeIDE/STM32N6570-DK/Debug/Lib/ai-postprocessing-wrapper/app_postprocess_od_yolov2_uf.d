@@ -1,6 +1,6 @@
 Lib/ai-postprocessing-wrapper/app_postprocess_od_yolov2_uf.o: \
- C:/Users/nogueirp/InternshipST/Lib/ai-postprocessing-wrapper/app_postprocess_od_yolov2_uf.c \
- C:/Users/nogueirp/InternshipST/Lib/ai-postprocessing-wrapper/app_postprocess.h \
+ C:/Users/madmc/OneDrive/InternshipST/Lib/ai-postprocessing-wrapper/app_postprocess_od_yolov2_uf.c \
+ C:/Users/madmc/OneDrive/InternshipST/Lib/ai-postprocessing-wrapper/app_postprocess.h \
  ../../../Lib/lib_vision_models_pp/lib_vision_models_pp/Inc/od_yolov2_pp_if.h \
  ../../../Lib/lib_vision_models_pp/lib_vision_models_pp/Inc/od_pp_output_if.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math.h \
@@ -58,7 +58,7 @@ Lib/ai-postprocessing-wrapper/app_postprocess_od_yolov2_uf.o: \
  ../../../Lib/lib_vision_models_pp/lib_vision_models_pp/Inc/sseg_pp_output_if.h \
  ../../../Inc/app_config.h ../../../Inc/postprocess_conf.h \
  ../../../Inc/timing_conf.h
-C:/Users/nogueirp/InternshipST/Lib/ai-postprocessing-wrapper/app_postprocess.h:
+C:/Users/madmc/OneDrive/InternshipST/Lib/ai-postprocessing-wrapper/app_postprocess.h:
 ../../../Lib/lib_vision_models_pp/lib_vision_models_pp/Inc/od_yolov2_pp_if.h:
 ../../../Lib/lib_vision_models_pp/lib_vision_models_pp/Inc/od_pp_output_if.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/DSP/Include/arm_math.h:

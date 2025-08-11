@@ -1,5 +1,5 @@
 Lib/FreeRTOS/Source/list.o: \
- C:/Users/nogueirp/InternshipST/Lib/FreeRTOS/Source/list.c \
+ C:/Users/madmc/OneDrive/InternshipST/Lib/FreeRTOS/Source/list.c \
  ../../../Lib/FreeRTOS/Source/include/FreeRTOS.h \
  ../../../Inc/FreeRTOSConfig.h \
  ../../../Lib/FreeRTOS/Source/include/projdefs.h \

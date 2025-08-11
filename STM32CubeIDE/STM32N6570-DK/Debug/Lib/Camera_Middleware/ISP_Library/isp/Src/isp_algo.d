@@ -1,5 +1,5 @@
 Lib/Camera_Middleware/ISP_Library/isp/Src/isp_algo.o: \
- C:/Users/nogueirp/InternshipST/Lib/Camera_Middleware/ISP_Library/isp/Src/isp_algo.c \
+ C:/Users/madmc/OneDrive/InternshipST/Lib/Camera_Middleware/ISP_Library/isp/Src/isp_algo.c \
  ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_core.h \
  ../../../Inc/isp_conf.h \
  ../../../Lib/Camera_Middleware/ISP_Library/isp/Inc/isp_platform.h \

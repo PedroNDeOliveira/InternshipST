@@ -1,5 +1,5 @@
 Lib/FreeRTOS/Source/tasks.o: \
- C:/Users/nogueirp/InternshipST/Lib/FreeRTOS/Source/tasks.c \
+ C:/Users/madmc/OneDrive/InternshipST/Lib/FreeRTOS/Source/tasks.c \
  ../../../Lib/FreeRTOS/Source/include/FreeRTOS.h \
  ../../../Inc/FreeRTOSConfig.h \
  ../../../Lib/FreeRTOS/Source/include/projdefs.h \
