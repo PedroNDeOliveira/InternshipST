@@ -187,6 +187,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Lib/Camera_Middleware/sensors/cmw_imx335.c</locationURI>
 		</link>
 		<link>
+			<name>Lib/Camera_Middleware/sensors/cmw_vd1941.c</name>
+			<type>1</type>
+			<location>C:/Users/madmc/OneDrive/InternshipST/Lib/Camera_Middleware/sensors/cmw_vd1941.c</location>
+		</link>
+		<link>
 			<name>Lib/Camera_Middleware/sensors/cmw_vd55g1.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Lib/Camera_Middleware/sensors/cmw_vd55g1.c</locationURI>
@@ -300,6 +305,11 @@
 			<name>Lib/Camera_Middleware/sensors/imx335/imx335_reg.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Lib/Camera_Middleware/sensors/imx335/imx335_reg.c</locationURI>
+		</link>
+		<link>
+			<name>Lib/Camera_Middleware/sensors/vd1941/vdx941.c</name>
+			<type>1</type>
+			<location>C:/Users/madmc/OneDrive/InternshipST/Lib/Camera_Middleware/sensors/vd1941/vdx941.c</location>
 		</link>
 		<link>
 			<name>Lib/Camera_Middleware/sensors/vd55g1/vd55g1.c</name>

@@ -91,6 +91,7 @@
 									<listOptionValue builtIn="false" value="USE_IMX335_SENSOR"/>
 									<listOptionValue builtIn="false" value="USE_VD66GY_SENSOR"/>
 									<listOptionValue builtIn="false" value="USE_VD55G1_SENSOR"/>
+									<listOptionValue builtIn="false" value="USE_VD1941_SENSOR"/>
 									<listOptionValue builtIn="false" value="STM32N6570_DK_REV"/>
 									<listOptionValue builtIn="false" value="HAS_ROTATION_SUPPORT=0"/>
 									<listOptionValue builtIn="false" value="TX_MAX_PARALLEL_NETWORKS=1"/>
@@ -133,6 +134,7 @@
 									<listOptionValue builtIn="false" value="../../../Lib/tracker"/>
 									<listOptionValue builtIn="false" value="../../../Lib/NemaGFX/include"/>
 									<listOptionValue builtIn="false" value="../../../Src"/>
+									<listOptionValue builtIn="false" value="../../../Lib/Camera_Middleware/sensors/vd1941"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.otherflags.315856049" name="Other flags" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.otherflags" useByScannerDiscovery="true" valueType="stringList">
 									<listOptionValue builtIn="false" value=""/>

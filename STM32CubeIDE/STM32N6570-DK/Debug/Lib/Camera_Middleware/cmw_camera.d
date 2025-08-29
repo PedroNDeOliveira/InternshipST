@@ -70,7 +70,9 @@ Lib/Camera_Middleware/cmw_camera.o: \
  ../../../Lib/Camera_Middleware/sensors/imx335/imx335_reg.h \
  ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/cmsis_compiler.h \
  ../../../Lib/Camera_Middleware/sensors/cmw_vd66gy.h \
- ../../../Lib/Camera_Middleware/sensors/vd6g/vd6g.h
+ ../../../Lib/Camera_Middleware/sensors/vd6g/vd6g.h \
+ ../../../Lib/Camera_Middleware/sensors/cmw_vd1941.h \
+ ../../../Lib/Camera_Middleware/sensors/vd1941/vdx941.h
 C:/Users/madmc/OneDrive/InternshipST/Lib/Camera_Middleware/cmw_camera.h:
 C:/Users/madmc/OneDrive/InternshipST/Lib/Camera_Middleware/cmw_errno.h:
 ../../../Inc/cmw_camera_conf.h:
@@ -142,3 +144,5 @@ C:/Users/madmc/OneDrive/InternshipST/Lib/Camera_Middleware/cmw_io.h:
 ../../../STM32Cube_FW_N6/Drivers/CMSIS/Include/cmsis_compiler.h:
 ../../../Lib/Camera_Middleware/sensors/cmw_vd66gy.h:
 ../../../Lib/Camera_Middleware/sensors/vd6g/vd6g.h:
+../../../Lib/Camera_Middleware/sensors/cmw_vd1941.h:
+../../../Lib/Camera_Middleware/sensors/vd1941/vdx941.h:

@@ -313,6 +313,7 @@ LL_ATON_DECLARE_NAMED_NN_INSTANCE_AND_INTERFACE(palm_detector);
 static roi_t rois[PD_MAX_HAND_NB];
 static int turn_people_detection = 1;
 static int palm_detector_finished = 0;
+static int found_raisedh = 0;
 
 /* hand landmark */
 //LL_ATON_DECLARE_NAMED_NN_INSTANCE_AND_INTERFACE(hand_landmark);
@@ -1673,6 +1674,27 @@ static void on_pd_toggle_button_click(void *args)
 	}
 }
 
+static int is_hand_raised(trk_tbox_t *hand){
+        int topx, topy;
+        int botx, boty;
+        pd_pp_box_t hand_pd_box;
+
+        printf("entering is_hand_raised function\r\n");
+
+        if(hand->dbox_userdata == NULL) return 0;
+
+        hand_pd_box.pKps = (pd_pp_point_t *) hand->dbox_userdata;
+
+        //topx = (int) hand_pd_box.pKps[0].x;
+        topy = (int) hand_pd_box.pKps[0].y;
+
+        //botx = (int) hand_pd_box.pKps[2].x;
+        boty = (int) hand_pd_box.pKps[2].y;
+
+        if(topy > boty) return 1;
+        return 0;
+}
+
 static void nn_thread_fct(void *arg)
 {
 //  const LL_Buffer_InfoTypeDef *nn_out_info_people = LL_ATON_Output_Buffers_Info_Default();
@@ -1781,10 +1803,17 @@ static void nn_thread_fct(void *arg)
           if (!tboxes_pd[i].is_tracking || tboxes_pd[i].tlost_cnt)
             continue;
           printf("Tracked box number = %d \n \r", i);
+
           disp.info.hands[disp.info.tboxes_valid_nb].is_valid = 1;
           copy_trk_box_to_pd_box(&disp.info.hands[disp.info.tboxes_valid_nb].pd_hands, &tboxes_pd[i]);
           cvt_pd_coord_to_screen_coord(&disp.info.hands[disp.info.tboxes_valid_nb].pd_hands);
           disp.info.tboxes_valid_nb++;
+
+          if(is_hand_raised(&tboxes_pd[i])){
+			  printf("HAND_RAISED_OK\r\n");
+			  raised_hand = tboxes_pd[i];
+			  found_raisedh = 1;
+          }
         }
         ret = xSemaphoreGive(disp.lock);
         assert(ret == pdTRUE);
@@ -1938,24 +1967,24 @@ static double comp_euclidean_centers_dist(trk_tbox_t *person_box){
         return sqrt(xdist + ydist);
 }
 
-static int is_hand_raised(trk_tbox_t *hand){
-        int topx, topy;
-        int botx, boty;
-        pd_pp_box_t hand_pd_box;
-
-        if(hand->dbox_userdata == NULL) return 0;
-
-        hand_pd_box.pKps = (pd_pp_point_t *) hand->dbox_userdata;
-
-        //topx = (int) hand_pd_box.pKps[0].x;
-        topy = (int) hand_pd_box.pKps[0].y;
-
-        //botx = (int) hand_pd_box.pKps[2].x;
-        boty = (int) hand_pd_box.pKps[2].y;
-
-        if(topy > boty) return 1;
-        return 0;
-}
+//static int is_hand_raised(trk_tbox_t *hand){
+//        int topx, topy;
+//        int botx, boty;
+//        pd_pp_box_t hand_pd_box;
+//
+//        if(hand->dbox_userdata == NULL) return 0;
+//
+//        hand_pd_box.pKps = (pd_pp_point_t *) hand->dbox_userdata;
+//
+//        //topx = (int) hand_pd_box.pKps[0].x;
+//        topy = (int) hand_pd_box.pKps[0].y;
+//
+//        //botx = (int) hand_pd_box.pKps[2].x;
+//        boty = (int) hand_pd_box.pKps[2].y;
+//
+//        if(topy > boty) return 1;
+//        return 0;
+//}
 
 
 // Select raised hand. If there are multiple, we take the one that has missed fewer frames.
@@ -1981,8 +2010,8 @@ static int get_raised_hand(){
 static int match_rhand_to_tbox(){
         double max_dist = 900;
         double dist;
-     if(!get_raised_hand()){
-             return 0;
+     if(!found_raisedh){
+        return 0;
      }
      tracking_id = -1;
          for(int i = 0; i < ARRAY_NB(tboxes); i++){
@@ -2043,6 +2072,7 @@ static void pp_thread_fct(void *arg)
     nn_pp[1] = HAL_GetTick();
 
     // After palm detector model has ran, we're gonna assign the detected raised hand to its respective person bounding box.
+    // For 10 consecutive frames, we'll try to assign the last detected raised hand to a person bounding box.
     if(palm_detector_finished){
     	if(match_rhand_to_tbox()){
     		printf("Matched the raised hand to a person bounding box. \n \r ");
@@ -2211,13 +2241,14 @@ static void Display_init()
   memset(lcd_bg_buffer_const_black, 0, sizeof(lcd_bg_buffer_const_black));
 }
 
-static uint32_t compute_delta(){
+static int compute_delta(){
 	int xc, yc;
 	 for(int i = 0; i < ARRAY_NB(tboxes); i++){
 	      if (!tboxes[i].is_tracking || tboxes[i].tlost_cnt)
 	        continue;
 	      if(tboxes[i].id  == tracking_id){
 	    	  convert_point(tboxes[i].cx, tboxes[i].cy, &xc, &yc);
+	    	  printf("X point is %d \n \r", (int) xc);
 	    	  return (xc - LCD_BG_WIDTH/2);
 	      }
 	 }
@@ -2234,16 +2265,17 @@ static void motor_step(int dir){
 	HAL_GPIO_WritePin(GPIOH, GPIO_PIN_8, GPIO_PIN_SET);
 	HAL_Delay(1);
 	HAL_GPIO_WritePin(GPIOH, GPIO_PIN_8, GPIO_PIN_RESET);
+	HAL_Delay(MOTOR_SPEED_DELAY_MS);
 }
 
-static void motor_tracking(uint32_t delta){
-	for(int i = 0; i < abs(delta)/8; i++){
+static void motor_tracking(int delta){
+	for(int i = 0; i < abs(delta)/STEP_SIZE_DIV; i++){
 		if(delta > 0){
-			//printf("going left. \n \r");
+			printf("going left. \n \r");
 			motor_step(1);
 		}
 		else{
-			//printf("going right. \n \r");
+			printf("going right. \n \r");
 			motor_step(0);
 		}
 	}
@@ -2253,12 +2285,17 @@ static void motor_tracking(uint32_t delta){
 
 static void mt_thread_fct(void *arg){
 	//int ret;
-	uint32_t delta = 0;
+	int delta = 0;
 	while(1){
+		//printf("Motor thread. \n \r");
 		if(tracking_after_raised_hand){
+			HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, GPIO_PIN_RESET); // Enable stepper motor
 			delta = compute_delta();
-			printf("Delta = %u \n \r", delta);
-			motor_tracking(delta);
+			printf("Delta = %d \n \r", delta);
+			if(abs(delta) > 30)
+				motor_tracking(delta);
+		} else {
+			HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, GPIO_PIN_SET); // Disable stepper motor
 		}
 	}
 }
@@ -2415,6 +2452,7 @@ void BSP_PB_Callback(Button_TypeDef Button){
 			vTaskSuspend(nn);
 			vTaskSuspend(pp);
 			vTaskSuspend(isp);
+			//vTaskSuspend(mt);
 			xSemaphoreGiveFromISR(disp.update,&xHigherPriorityTaskWoken);
 			xSemaphoreGiveFromISR(disp.lock,&xHigherPriorityTaskWoken);
 		}
@@ -2427,6 +2465,7 @@ void BSP_PB_Callback(Button_TypeDef Button){
 			xTaskResumeFromISR(nn);
 			xTaskResumeFromISR(pp);
 			xTaskResumeFromISR(isp);
+			//xTaskResumeFromISR(mt);
 			HAL_TIM_Base_Start_IT(&htim2);
 		}
 	}

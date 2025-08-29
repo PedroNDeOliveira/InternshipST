@@ -30,6 +30,7 @@ Lib/Camera_Middleware/ISP_Library/isp/Src \
 Lib/Camera_Middleware \
 Lib/Camera_Middleware/sensors \
 Lib/Camera_Middleware/sensors/imx335 \
+Lib/Camera_Middleware/sensors/vd1941 \
 Lib/Camera_Middleware/sensors/vd55g1 \
 Lib/Camera_Middleware/sensors/vd6g \
 Lib/FreeRTOS/Source \

@@ -24,6 +24,10 @@
 #define PALM_D_RUNNING_TIME 5
 #define PALM_D_COUNTDOWN_TIME 3
 
+#define MOTOR_SPEED_DELAY_MS 50
+#define STEP_SIZE_DIV 8
+
+
 #endif
 
 

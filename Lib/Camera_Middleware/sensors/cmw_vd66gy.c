@@ -252,9 +252,9 @@ static int32_t CMW_VD66GY_Init(void *io_ctx, CMW_Sensor_Init_t *initSensor)
   config.patgen = VD6G_PATGEN_DISABLE;
   config.flicker = VD6G_FLICKER_FREE_NONE;
   config.out_itf.datalane_nb = 2;
-  config.out_itf.clock_lane_swap_enable = 1;
-  config.out_itf.data_lane0_swap_enable = 1;
-  config.out_itf.data_lane1_swap_enable = 1;
+  config.out_itf.clock_lane_swap_enable = 0;
+  config.out_itf.data_lane0_swap_enable = 0;
+  config.out_itf.data_lane1_swap_enable = 0;
   config.out_itf.data_lanes_mapping_swap_enable = 0;
   for (i = 0; i < VD6G_GPIO_NB; i++)
   {

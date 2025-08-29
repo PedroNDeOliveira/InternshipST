@@ -1,5 +1,5 @@
 # Set path to CubeProgrammer tools
-$CPROG_PTH = "C:\ST\STM32CubeIDE_1.18.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.win32_2.2.100.202412061334\tools\bin"
+$CPROG_PTH = "C:\ST\STM32CubeIDE_1.17.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.win32_2.2.100.202412061334\tools\bin"
 
 # Executables
 $SGN_BIN =  "STM32_SigningTool_CLI.exe"

@@ -27,6 +27,7 @@ RM := rm -rf
 -include Lib/FreeRTOS/Source/subdir.mk
 -include Lib/Camera_Middleware/sensors/vd6g/subdir.mk
 -include Lib/Camera_Middleware/sensors/vd55g1/subdir.mk
+-include Lib/Camera_Middleware/sensors/vd1941/subdir.mk
 -include Lib/Camera_Middleware/sensors/imx335/subdir.mk
 -include Lib/Camera_Middleware/sensors/subdir.mk
 -include Lib/Camera_Middleware/ISP_Library/isp/Src/subdir.mk

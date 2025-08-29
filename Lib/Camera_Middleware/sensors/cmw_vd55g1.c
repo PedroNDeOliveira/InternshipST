@@ -261,8 +261,8 @@ static int32_t CMW_VD55G1_Init(void *io_ctx, CMW_Sensor_Init_t *initSensor)
   config.patgen = VD55G1_PATGEN_DISABLE;
   config.flicker = VD55G1_FLICKER_FREE_NONE;
   config.out_itf.data_rate_in_mps = VD55G1_DEFAULT_DATARATE;
-  config.out_itf.clock_lane_swap_enable = 1;
-  config.out_itf.data_lane_swap_enable = 1;
+  config.out_itf.clock_lane_swap_enable = 0;
+  config.out_itf.data_lane_swap_enable = 0;
   config.awu.is_enable = 0;
   for (i = 0; i < VD55G1_GPIO_NB; i++)
   {

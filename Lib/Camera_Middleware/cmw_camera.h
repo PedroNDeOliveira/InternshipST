@@ -44,6 +44,7 @@ typedef enum {
   CMW_VD66GY_Sensor = 0x0,
   CMW_IMX335_Sensor,
   CMW_VD55G1_Sensor,
+  CMW_VD1941_Sensor,
 } CMW_Sensor_Name_t;
 
 typedef enum {

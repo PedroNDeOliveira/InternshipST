@@ -33,6 +33,9 @@
 #if defined(USE_VD66GY_SENSOR)
 #include "cmw_vd66gy.h"
 #endif
+#if defined(USE_VD1941_SENSOR)
+#include "cmw_vd1941.h"
+#endif
 
 typedef struct
 {
@@ -72,6 +75,9 @@ static union
 #if defined(USE_VD66GY_SENSOR)
   CMW_VD66GY_t vd66gy_bsp;
 #endif
+#if defined(USE_VD1941_SENSOR)
+  CMW_VD1941_t vd1941_bsp;
+#endif
 
 } camera_bsp;
 
@@ -87,6 +93,9 @@ static int32_t CMW_CAMERA_VD55G1_Init( CMW_Sensor_Init_t *initSensors_params);
 #endif
 #if defined(USE_VD66GY_SENSOR)
 static int32_t CMW_CAMERA_VD66GY_Init(CMW_Sensor_Init_t *initValues);
+#endif
+#if defined(USE_VD1941_SENSOR)
+static int32_t CMW_CAMERA_VD1941_Init(CMW_Sensor_Init_t *initValues);
 #endif
 static void CMW_CAMERA_EnableGPIOs(void);
 static void CMW_CAMERA_PwrDown(void);
@@ -206,6 +215,7 @@ static int CMW_CAMERA_Probe_Sensor(CMW_Sensor_Init_t *initValues, CMW_Sensor_Nam
   ret = CMW_CAMERA_VD55G1_Init(initValues);
   if (ret == CMW_ERROR_NONE)
   {
+	  printf("Camera used: VD55G1. \n \r");
     *sensorName = CMW_VD55G1_Sensor;
     return ret;
   }
@@ -215,6 +225,7 @@ static int CMW_CAMERA_Probe_Sensor(CMW_Sensor_Init_t *initValues, CMW_Sensor_Nam
   ret = CMW_CAMERA_VD66GY_Init(initValues);
   if (ret == CMW_ERROR_NONE)
   {
+	  printf("Camera used: VD66GY. \n \r");
     *sensorName = CMW_VD66GY_Sensor;
     return ret;
   }
@@ -223,7 +234,18 @@ static int CMW_CAMERA_Probe_Sensor(CMW_Sensor_Init_t *initValues, CMW_Sensor_Nam
   ret = CMW_CAMERA_IMX335_Init(initValues);
   if (ret == CMW_ERROR_NONE)
   {
+	  printf("Camera used: IMX335. \n \r");
     *sensorName = CMW_IMX335_Sensor;
+    return ret;
+  }
+#endif
+#if defined(USE_VD1941_SENSOR)
+  //printf("Probing VD1941. \n \r");
+  ret = CMW_CAMERA_VD1941_Init(initValues);
+  if (ret == CMW_ERROR_NONE)
+  {
+	  printf("Camera used: VD66GY. \n \r");
+    *sensorName = CMW_VD1941_Sensor;
     return ret;
   }
 #endif
@@ -280,7 +302,7 @@ int32_t CMW_CAMERA_Init(CMW_CameraInit_t *initConf)
   {
     return CMW_ERROR_UNKNOWN_COMPONENT;
   }
-
+  printf("Probed and found sensor. \n \r");
   /* Configure exposure and gain for a more suitable quality */
   ret = CMW_CAMERA_GetSensorInfo(&info);
   if (ret == CMW_ERROR_COMPONENT_FAILURE)
@@ -1169,6 +1191,80 @@ static int32_t CMW_CAMERA_IMX335_Init(CMW_Sensor_Init_t *initSensors_params)
 
 
   return ret;
+}
+#endif
+
+#if defined(USE_VD1941_SENSOR)
+static int32_t CMW_CAMERA_VD1941_Init( CMW_Sensor_Init_t *initSensors_params)
+{
+  int32_t ret = CMW_ERROR_NONE;
+  DCMIPP_CSI_ConfTypeDef csi_conf = { 0 };
+  DCMIPP_CSI_PIPE_ConfTypeDef csi_pipe_conf = { 0 };
+
+  camera_bsp.vd1941_bsp.Address     = CAMERA_VD1941_ADDRESS;
+  camera_bsp.vd1941_bsp.Init        = CMW_I2C_INIT;
+  camera_bsp.vd1941_bsp.DeInit      = CMW_I2C_DEINIT;
+  camera_bsp.vd1941_bsp.WriteReg    = CMW_I2C_WRITEREG16;
+  camera_bsp.vd1941_bsp.ReadReg     = CMW_I2C_READREG16;
+  camera_bsp.vd1941_bsp.Delay       = HAL_Delay;
+  camera_bsp.vd1941_bsp.ShutdownPin = CMW_CAMERA_ShutdownPin;
+  camera_bsp.vd1941_bsp.EnablePin   = CMW_CAMERA_EnablePin;
+  camera_bsp.vd1941_bsp.hdcmipp     = &hcamera_dcmipp;
+
+  ret = CMW_VD1941_Probe(&camera_bsp.vd1941_bsp, &Camera_Drv);
+  if (ret != CMW_ERROR_NONE)
+  {
+	  printf("Error on probing. \n \r");
+    return CMW_ERROR_COMPONENT_FAILURE;
+  }
+
+  ret = Camera_Drv.Init(&camera_bsp, initSensors_params);
+  if (ret != CMW_ERROR_NONE)
+  {
+	printf("Error on init. \n \r");
+    return CMW_ERROR_COMPONENT_FAILURE;
+  }
+
+  csi_conf.NumberOfLanes = DCMIPP_CSI_TWO_DATA_LANES;
+  csi_conf.DataLaneMapping = DCMIPP_CSI_PHYSICAL_DATA_LANES;
+  csi_conf.PHYBitrate = DCMIPP_CSI_PHY_BT_1300;
+
+  // HPI DEBUG set PHY Bitrate
+#if defined(CONF_30FPS_1300MBPS) || defined(CONF_25FPS_1300MBPS)
+  csi_conf.PHYBitrate = DCMIPP_CSI_PHY_BT_1300;
+#elif defined(CONF_30FPS_900MBPS) || defined(CONF_25FPS_900MBPS)
+  csi_conf.PHYBitrate = DCMIPP_CSI_PHY_BT_900;
+#elif defined(CONF_25FPS_600MBPS)
+  csi_conf.PHYBitrate = DCMIPP_CSI_PHY_BT_600;
+//#else
+//ERROR: missing FPS and DATARATE selection in app_new_specific_config.h
+#endif
+
+  ret = HAL_DCMIPP_CSI_SetConfig(&hcamera_dcmipp, &csi_conf);
+  if (ret != HAL_OK)
+  {
+	  printf("Error on HAL_DCMIPP_CSI_SetConfig. \n \r");
+    return CMW_ERROR_PERIPH_FAILURE;
+  }
+
+  ret = HAL_DCMIPP_CSI_SetVCConfig(&hcamera_dcmipp, DCMIPP_VIRTUAL_CHANNEL0, DCMIPP_CSI_DT_BPP8);
+  if (ret != HAL_OK)
+  {
+	  printf("Error on HAL_DCMIPP_CSI_SetVCConfig. \n \r");
+    return CMW_ERROR_PERIPH_FAILURE;
+  }
+
+  csi_pipe_conf.DataTypeMode = DCMIPP_DTMODE_DTIDA;
+  csi_pipe_conf.DataTypeIDA = DCMIPP_DT_RAW8;
+  csi_pipe_conf.DataTypeIDB = 0;
+  ret = HAL_DCMIPP_CSI_PIPE_SetConfig(&hcamera_dcmipp, DCMIPP_PIPE1, &csi_pipe_conf);
+  if (ret != HAL_OK)
+  {
+	  printf("Error on HAL_DCMIPP_CSI_PIPE_SetConfig. \n \r");
+    return CMW_ERROR_PERIPH_FAILURE;
+  }
+
+  return CMW_ERROR_NONE;
 }
 #endif
 
